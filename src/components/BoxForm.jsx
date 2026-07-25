@@ -63,7 +63,7 @@ function BoxForm({
                   key={bird.id}
                   value={bird.ringNumber}
                 >
-                  {bird.ringNumber}
+                  {`${bird.ringNumber} • ${bird.colour} ${bird.sex} • ${bird.family}`}
                 </option>
               ))}
             </select>
@@ -86,7 +86,7 @@ function BoxForm({
                   key={bird.id}
                   value={bird.ringNumber}
                 >
-                  {bird.ringNumber}
+                  {`${bird.ringNumber} • ${bird.colour} ${bird.sex} • ${bird.family}`}
                 </option>
               ))}
             </select>
