@@ -14,21 +14,8 @@ import HealthCentre from "./components/HealthCentre";
 import SeasonPlanner from "./components/SeasonPlanner";
 import ReportsAnalytics from "./components/ReportsAnalytics";
 import ArchiveCentre from "./components/ArchiveCentre";
-
-const menuItems = [
-   'Dashboard',
-  'Command Centre',
-  'Bird Register',
- 'Loft Configuration',
-  'Loft View',
-  'Breeding Centre',
-  'Race Centre',
-  'Health Centre',
-  'Season Planner',
-  'Reports & Analytics',
-  'Archive Centre',
-]
-
+import Sidebar from "./components/Sidebar";
+import BirdProfile from "./components/BirdProfile";
 
 const emptyBird = {
   birdId: '',
@@ -116,14 +103,13 @@ function loadBoxes() {
 function generateBirdId(existingBirds) {
   const prefix = "LC";
 
-  const numbers = existingBirds
-    .map((bird) => {
-      if (!bird.birdId) return 0;
+  const numbers = existingBirds.map((bird) => {
+    if (!bird.birdId) return 0;
 
-      const match = bird.birdId.match(/^LC-(\d+)$/);
+    const match = bird.birdId.match(/^LC-(\d+)$/);
 
-      return match ? Number(match[1]) : 0;
-    });
+    return match ? Number(match[1]) : 0;
+  });
 
   const nextNumber =
     numbers.length > 0
@@ -148,6 +134,7 @@ function App() {
 
   const [selectedLoft, setSelectedLoft] = useState(lofts[0])
   const [selectedBox, setSelectedBox] = useState(null)
+  const [selectedBird, setSelectedBird] = useState(null)
 
   useEffect(() => {
     localStorage.setItem(
@@ -239,17 +226,17 @@ function App() {
     }
 
     const savedBird = {
-  ...form,
-  birdId:
-    form.birdId ||
-    generateBirdId(birds),
+      ...form,
+      birdId:
+        form.birdId ||
+        generateBirdId(birds),
 
-  ringNumber,
+      ringNumber,
 
-  id:
-    editingId ||
-    crypto.randomUUID(),
-}
+      id:
+        editingId ||
+        crypto.randomUUID(),
+    }
 
     setBirds((current) =>
       editingId
@@ -316,38 +303,22 @@ function App() {
     setSelectedBox(null)
   }
 
+  function openBirdProfile(bird) {
+    setSelectedBird(bird)
+    setActivePage('Bird Profile')
+  }
+
+  function closeBirdProfile() {
+    setSelectedBird(null)
+    setActivePage('Bird Register')
+  }
+
   return (
     <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-mark">LC</span>
-
-          <div>
-            <h1>Loft Commander</h1>
-            <p>The Railway Lofts, Church Lane</p>
-          </div>
-        </div>
-
-        <nav>
-          {menuItems.map((item) => (
-            <button
-              key={item}
-              className={
-                activePage === item ? 'active' : ''
-              }
-              onClick={() => setActivePage(item)}
-            >
-              {item}
-            </button>
-          ))}
-        </nav>
-
-        <p className="version">
-          Loft Commander
-          <br />
-          Version 1.1
-        </p>
-      </aside>
+      <Sidebar
+        activePage={activePage}
+        setActivePage={setActivePage}
+      />
 
       <main className="main-content">
         <header className="topbar">
@@ -386,55 +357,62 @@ function App() {
             openNewBird={openNewBird}
             openEditBird={openEditBird}
             deleteBird={deleteBird}
+            openBirdProfile={openBirdProfile}
           />
         )}
 
-{activePage === 'Loft Configuration' && (
-  <LoftConfiguration />
-)}
+        {activePage === 'Bird Profile' && (
+          <BirdProfile
+            bird={selectedBird}
+            onBack={closeBirdProfile}
+          />
+        )}
+
+        {activePage === 'Loft Configuration' && (
+          <LoftConfiguration />
+        )}
 
         {activePage === 'Breeding Centre' && (
-  <BreedingCentre
-    lofts={lofts}
-    assignments={boxAssignments}
-    openLoft={openLoft}
+          <BreedingCentre
+            lofts={lofts}
+            assignments={boxAssignments}
+            openLoft={openLoft}
           />
         )}
 
         {activePage === 'Loft View' && (
-           <LoftView
+          <LoftView
             lofts={lofts}
-  selectedLoft={selectedLoft}
-  setSelectedLoft={setSelectedLoft}
-  assignments={boxAssignments}
-  setSelectedBox={setSelectedBox}
-       
+            selectedLoft={selectedLoft}
+            setSelectedLoft={setSelectedLoft}
+            assignments={boxAssignments}
+            setSelectedBox={setSelectedBox}
           />
         )}
 
-        {activePage === "Dashboard" && (
-   <Dashboard birds={birds} />
-)}
+        {activePage === 'Dashboard' && (
+          <Dashboard birds={birds} />
+        )}
 
-{activePage === "Race Centre" && (
-  <RaceCentre />
-)}
+        {activePage === 'Race Centre' && (
+          <RaceCentre />
+        )}
 
-{activePage === "Health Centre" && (
-  <HealthCentre />
-)}
+        {activePage === 'Health Centre' && (
+          <HealthCentre />
+        )}
 
-{activePage === "Season Planner" && (
-  <SeasonPlanner />
-)}
+        {activePage === 'Season Planner' && (
+          <SeasonPlanner />
+        )}
 
-{activePage === "Reports & Analytics" && (
-  <ReportsAnalytics />
-)}
+        {activePage === 'Reports & Analytics' && (
+          <ReportsAnalytics />
+        )}
 
-{activePage === "Archive Centre" && (
-  <ArchiveCentre />
-)}
+        {activePage === 'Archive Centre' && (
+          <ArchiveCentre />
+        )}
       </main>
 
       {formOpen && (
@@ -468,6 +446,4 @@ function App() {
   )
 }
 
-export default App;
-
-
+export default App

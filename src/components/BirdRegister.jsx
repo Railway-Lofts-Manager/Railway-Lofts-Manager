@@ -8,8 +8,7 @@ export default function BirdRegister({
   statusFilter,
   setStatusFilter,
   openNewBird,
-  openEditBird,
-  deleteBird,
+  openBirdProfile,
 }) {
   return (
     <>
@@ -61,39 +60,48 @@ export default function BirdRegister({
                   <th>Status</th>
                   <th>Loft</th>
                   <th>Nest Box</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
 
               <tbody>
                 {birds.map((bird) => (
                   <tr key={bird.id}>
-                    <td><strong>{bird.birdId || "—"}</strong></td>
                     <td>
-                      <strong>{bird.ringNumber}</strong><br />
+                      <strong>{bird.birdId || "—"}</strong>
+                    </td>
+
+                    <td>
+                      <button
+                        type="button"
+                        className="ring-number-link"
+                        onClick={() => openBirdProfile(bird)}
+                      >
+                        {bird.ringNumber}
+                      </button>
+                      <br />
                       <small>{bird.year}</small>
                     </td>
+
                     <td>{bird.name || "—"}</td>
                     <td>{bird.breed || "—"}</td>
                     <td>{bird.sex}</td>
                     <td>{bird.colour || "—"}</td>
+
                     <td>
-                      <span className={`status status-${bird.status.toLowerCase().replace(" ", "-")}`}>
+                      <span
+                        className={`status status-${bird.status
+                          .toLowerCase()
+                          .replace(" ", "-")}`}
+                      >
                         {bird.status}
                       </span>
                     </td>
+
                     <td>{bird.loft || "—"}</td>
                     <td>{bird.nestBox || "—"}</td>
-                    <td>
-                      <button onClick={() => openEditBird(bird)}>Edit</button>
-                      <button className="danger" onClick={() => deleteBird(bird)}>
-                        Delete
-                      </button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
-
             </table>
           </div>
         ) : (
@@ -101,6 +109,7 @@ export default function BirdRegister({
             <span>LC</span>
             <h3>No birds found</h3>
             <p>Change the search or add your first pigeon.</p>
+
             <button className="primary" onClick={openNewBird}>
               + Add Bird
             </button>
