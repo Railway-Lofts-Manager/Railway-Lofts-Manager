@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./BirdProfile.css";
+import "../pages/BirdProfile.css";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: "⌂" },

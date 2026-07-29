@@ -230,7 +230,7 @@
 .command-photo-frame {
   position: relative;
   overflow: hidden;
-  min-height: 310px;
+  min-height: 380px;
   border: 1px solid rgba(212, 175, 55, 0.42);
   border-radius: 16px;
   background:
@@ -1449,23 +1449,4 @@
   .command-placeholder {
     padding: 38px 18px;
   }
-}
-Replace lines 1453–1460 with this:
-.photo-remove-button {
-  display: block;
-  width: 100%;
-  margin-top: 12px;
-  padding: 11px 14px;
-  border: 1px solid rgba(212, 175, 55, 0.28);
-  border-radius: 10px;
-  color: #e5d28c;
-  font-weight: 850;
-  background: rgba(212, 175, 55, 0.07);
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.photo-remove-button:hover {
-border-color: rgba(212, 175, 55, 0.58);
-background: rgba(212, 175, 55, 0.13);
 }
