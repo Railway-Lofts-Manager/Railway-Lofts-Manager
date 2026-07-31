@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "../pages/BirdProfile.css";
 
 const tabs = [
@@ -15,9 +15,36 @@ const tabs = [
   { id: "archive", label: "Archive", icon: "▰" },
 ];
 
-export default function BirdProfile({ bird, onBack }) {
+export default function BirdProfile({
+  bird,
+  onBack,
+  onUpdateBird,
+}) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [photo, setPhoto] = useState(bird?.photo || null);
+const fileInputRef = useRef(null);
 
+const openPhotoPicker = () => {
+  fileInputRef.current?.click();
+};
+
+const handlePhotoSelected = (event) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+reader.onload = () => {
+    setPhoto(reader.result);
+
+    onUpdateBird?.({
+        ...bird,
+        photo: reader.result,
+    });
+};
+
+  reader.readAsDataURL(file);
+};
   if (!bird) {
     return (
       <section className="panel bird-profile-empty">
@@ -130,10 +157,14 @@ export default function BirdProfile({ bird, onBack }) {
 
         <div className="command-hero-layout">
           <div className="command-photo-panel">
-            <div className="command-photo-frame">
-              {bird.photo ? (
+          <div
+  className="command-photo-frame"
+  onClick={openPhotoPicker}
+  style={{ cursor: "pointer" }}
+>
+            {photo ? (
                 <img
-                  src={bird.photo}
+                src={photo}
                   alt={bird.name || bird.ringNumber || "Pigeon"}
                 />
               ) : (
@@ -141,6 +172,7 @@ export default function BirdProfile({ bird, onBack }) {
                   <span className="photo-placeholder-wings">◆</span>
                   <strong>{birdInitials}</strong>
                   <small>Bird photograph</small>
+                  <small>+ Add Photograph</small>
                 </div>
               )}
 
@@ -150,9 +182,16 @@ export default function BirdProfile({ bird, onBack }) {
               <div className="photo-frame-corner corner-bottom-right" />
             </div>
 
-            <button type="button" className="photo-action-button">
-              + Add Photograph
-            </button>
+            <>
+  <input
+    ref={fileInputRef}
+    type="file"
+    accept="image/*"
+    style={{ display: "none" }}
+    onChange={handlePhotoSelected}
+  />
+
+</>
           </div>
 
           <div className="command-identity-panel">

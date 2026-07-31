@@ -308,6 +308,14 @@ function App() {
     setActivePage('Bird Profile')
   }
 
+function updateBird(updatedBird) {
+  setBirds((current) =>
+    current.map((bird) =>
+      bird.birdId === updatedBird.birdId ? updatedBird : bird
+    )
+  );
+  }
+
   function closeBirdProfile() {
     setSelectedBird(null)
     setActivePage('Bird Register')
@@ -363,9 +371,10 @@ function App() {
 
         {activePage === 'Bird Profile' && (
           <BirdProfile
-            bird={selectedBird}
-            onBack={closeBirdProfile}
-          />
+    bird={selectedBird}
+    onBack={closeBirdProfile}
+    onUpdateBird={updateBird}
+/>
         )}
 
         {activePage === 'Loft Configuration' && (

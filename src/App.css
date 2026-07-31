@@ -794,7 +794,7 @@ align-items: center;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-.bird-photo-placeholder {
+.command-photo-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -804,4 +804,10 @@ border: 2px dashed rgba(255,255,255,0.25);
 border-radius: 10px;
 background: rgba(255,255,255,0.03);
   font-size: 42px;
+}
+.command-photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }

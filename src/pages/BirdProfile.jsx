@@ -150,10 +150,7 @@ export default function BirdProfile({ bird, onBack }) {
               <div className="photo-frame-corner corner-bottom-right" />
             </div>
 
-            <button type="button" className="photo-action-button">
-              + Add Photograph
-            </button>
-          </div>
+         </div>
 
           <div className="command-identity-panel">
             <div className="command-profile-heading">
