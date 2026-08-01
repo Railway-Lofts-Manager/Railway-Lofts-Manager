@@ -647,14 +647,13 @@
 .command-tabs {
   display: flex;
   gap: 6px;
-  overflow-x: auto;
+  flex-wrap: wrap;
   margin-bottom: 18px;
   padding: 8px;
   border: 1px solid #d6ddd7;
   border-radius: 15px;
   background: #ffffff;
   box-shadow: 0 8px 24px rgba(15, 34, 20, 0.07);
-  scrollbar-width: thin;
 }
 
 .command-tabs .profile-tab-button {
@@ -1451,4 +1450,14 @@
   .command-placeholder {
     padding: 38px 18px;
   }
+}
+
+/* ==========================================================
+   COMMAND DOSSIER V2 LAYOUT
+   ========================================================== */
+   .command-dossier-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
 }

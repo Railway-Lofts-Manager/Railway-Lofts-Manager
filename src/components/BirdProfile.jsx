@@ -292,7 +292,8 @@ reader.onload = () => {
       </section>
 
 
-
+<div className="command-dossier-layout">
+</div>
       <section className="profile-tab-navigation command-tabs">
         {tabs.map((tab) => (
           <button
