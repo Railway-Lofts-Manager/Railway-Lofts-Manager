@@ -291,7 +291,24 @@ reader.onload = () => {
         ))}
       </section>
 
-     
+
+
+      <section className="profile-tab-navigation command-tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            className={`profile-tab-button ${
+              activeTab === tab.id ? "active" : ""
+            }`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            <span className="command-tab-icon">{tab.icon}</span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </section>
+
       <section className="profile-content panel command-content-panel">
         {activeTab === "overview" && (
           <div className="profile-section">
