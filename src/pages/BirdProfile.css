@@ -646,6 +646,7 @@
 
 .command-tabs {
   display: flex;
+  justify-content: flex-start;
   gap: 6px;
   flex-wrap: wrap;
   margin-bottom: 18px;
@@ -1460,4 +1461,37 @@
   grid-template-columns: 260px 1fr;
   gap: 24px;
   align-items: start;
+}
+/* =====================================================
+   COMMAND RIBBON
+===================================================== */
+
+.command-ribbon {
+  background: linear-gradient(135deg, #0d2418, #173923);
+  color: #f5f8f4;
+  border: 1px solid #d4af37;
+  border-radius: 18px;
+  padding: 22px 28px;
+  margin-bottom: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+
+.command-ribbon-label {
+  display: inline-block;
+  color: #d4af37;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+
+.command-ribbon h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #ffffff;
+}
+
+.command-ribbon p {
+  margin-top: 8px;
+  color: rgba(255,255,255,.82);
 }

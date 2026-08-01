@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import "../pages/BirdProfile.css";
+import CommandRibbon from "./CommandRibbon";
 
 const tabs = [
   { id: "overview", label: "Overview", icon: "⌂" },
@@ -294,6 +295,8 @@ reader.onload = () => {
 
 <div className="command-dossier-layout">
 </div>
+<CommandRibbon />
+   
       <section className="profile-tab-navigation command-tabs">
         {tabs.map((tab) => (
           <button
