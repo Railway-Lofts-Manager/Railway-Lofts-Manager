@@ -297,7 +297,11 @@ reader.onload = () => {
 <div className="command-dossier-layout">
 </div>
 <CommandRibbon />
-<LifeHistoryTiles />
+
+<LifeHistoryTiles 
+ activeTab={activeTab}
+  onTabChange={setActiveTab}
+/>
    
       <section className="profile-tab-navigation command-tabs">
         {tabs.map((tab) => (

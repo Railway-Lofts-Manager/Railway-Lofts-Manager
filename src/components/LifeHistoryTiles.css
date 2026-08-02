@@ -1,34 +1,42 @@
 .life-history-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  margin: 24px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin: 32px 0;
 }
 
-.life-tile {
-  width: 220px;
-  height: 170px;
 
+.life-tile {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  background: linear-gradient(180deg, #123723 0%, #0d2b1a 100%);
-  color: #ffffff;
+  min-height: 170px;
+
+  background: #10331f;
 
   border: 2px solid #d4af37;
-  border-radius: 18px;
+  border-radius: 22px;
+
+  color: white;
 
   cursor: pointer;
-  transition: all 0.2s ease;
 
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.25),
+    0 0 14px rgba(212,175,55,.18);
 }
 
 .life-tile:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+  transform: translateY(-6px);
+  box-shadow:
+    0 16px 30px rgba(0,0,0,.35),
+    0 0 20px rgba(212,175,55,.30);
+
+  border-color: #f0d878;
 }
 
 .life-tile.active {

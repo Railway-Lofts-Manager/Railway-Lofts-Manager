@@ -5,7 +5,6 @@ const modules = [
     id: "overview",
     icon: "🏠",
     title: "Overview",
-    isActive: true,
   },
   {
     id: "pedigree",
@@ -17,17 +16,66 @@ const modules = [
     icon: "🏁",
     title: "Race Record",
   },
+  {
+    id: "breeding",
+    icon: "🥚",
+    title: "Breeding",
+  },
+  {
+    id: "training",
+    icon: "✈️",
+    title: "Training",
+  },
+  {
+    id: "health",
+    icon: "❤️",
+    title: "Health",
+  },
+  {
+    id: "photos",
+    icon: "📷",
+    title: "Photos",
+  },
+  {
+    id: "documents",
+    icon: "📄",
+    title: "Documents",
+  },
+  {
+    id: "notes",
+    icon: "📝",
+    title: "Notes",
+  },
+  {
+    id: "timeline",
+    icon: "🕒",
+    title: "Timeline",
+  },
+  {
+    id: "archive",
+    icon: "🗃️",
+    title: "Archive",
+  },
 ];
 
-export default function LifeHistoryTiles() {
+export default function LifeHistoryTiles({
+  activeTab,
+  onTabChange,
+}) {
   return (
     <section className="life-history-tiles">
       {modules.map((module) => (
         <button
           key={module.id}
-          className={`life-tile ${module.isActive ? "active" : ""}`}
+          type="button"
+          className={`life-tile ${
+            activeTab === module.id ? "active" : ""
+          }`}
+          onClick={() => onTabChange(module.id)}
         >
-          <span className="life-tile-icon">{module.icon}</span>
+          <span className="life-tile-icon">
+            {module.icon}
+          </span>
 
           <span className="life-tile-title">
             {module.title}
