@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import "../pages/BirdProfile.css";
 import CommandRibbon from "./CommandRibbon";
 import LifeHistoryTiles from "./LifeHistoryTiles";
+import ArchivePanel from "./Archive/ArchivePanel";
 
 
 
@@ -575,39 +576,11 @@ const returnToLifeHistory = () => {
         )}
 
         {activeTab === "archive" && (
-          <div className="profile-section">
-            <SectionHeading
-              label="Permanent lifetime record"
-              title="Archive Control"
-            />
-
-            <div className="archive-warning command-archive-warning">
-              <div className="archive-warning-icon">▰</div>
-
-              <div>
-                <p className="profile-label">ARCHIVE PROTOCOL</p>
-
-                <h4>
-                  {bird.archived
-                    ? "This bird is currently archived"
-                    : "Move this bird into the permanent archive"}
-                </h4>
-
-                <p>
-                  Archiving removes a bird from active working lists while
-                  preserving its complete lifetime history. Birds are never
-                  permanently deleted from Loft Commander.
-                </p>
-
-                <button type="button" className="command-primary-action">
-                  {bird.archived
-                    ? "Restore to Active Register"
-                    : "Archive Bird Record"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+  <ArchivePanel
+    bird={bird}
+    onUpdateBird={onUpdateBird}
+  />
+)}
             </section>
           </>
         )}

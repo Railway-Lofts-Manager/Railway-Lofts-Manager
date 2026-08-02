@@ -16,6 +16,7 @@ import ReportsAnalytics from "./components/ReportsAnalytics";
 import ArchiveCentre from "./components/ArchiveCentre";
 import Sidebar from "./components/Sidebar";
 import BirdProfile from "./components/BirdProfile";
+import birdStore from "./data/BirdStore";
 
 const emptyBird = {
   birdId: '',
@@ -71,24 +72,42 @@ const starterBirds = [
   },
 ]
 
-function loadBirds() {
+function loadLegacyBirds() {
   try {
-    const newSaved = localStorage.getItem('loft-commander-birds')
+    const currentSaved = localStorage.getItem('loft-commander-birds')
 
-    if (newSaved) {
-      return JSON.parse(newSaved)
+    if (currentSaved) {
+      const parsed = JSON.parse(currentSaved)
+      return Array.isArray(parsed) ? parsed : []
     }
 
     const oldSaved = localStorage.getItem('railway-lofts-birds')
 
     if (oldSaved) {
-      return JSON.parse(oldSaved)
+      const parsed = JSON.parse(oldSaved)
+      return Array.isArray(parsed) ? parsed : []
     }
 
     return starterBirds
   } catch {
     return starterBirds
   }
+}
+
+function initialiseBirdStore() {
+  const storedBirds = birdStore.getBirds()
+
+  if (storedBirds.length > 0) {
+    return storedBirds
+  }
+
+  const legacyBirds = loadLegacyBirds()
+
+  if (legacyBirds.length > 0) {
+    birdStore.importBirds(legacyBirds)
+  }
+
+  return birdStore.getBirds()
 }
 
 function loadBoxes() {
@@ -121,7 +140,7 @@ function generateBirdId(existingBirds) {
 
 function App() {
   const [activePage, setActivePage] = useState('Command Centre')
-  const [birds, setBirds] = useState(loadBirds)
+  const [birds, setBirds] = useState(initialiseBirdStore)
   const [boxAssignments, setBoxAssignments] = useState(loadBoxes)
 
   const [search, setSearch] = useState('')
@@ -137,11 +156,26 @@ function App() {
   const [selectedBird, setSelectedBird] = useState(null)
 
   useEffect(() => {
-    localStorage.setItem(
-      'loft-commander-birds',
-      JSON.stringify(birds),
-    )
-  }, [birds])
+    const unsubscribe = birdStore.subscribe((updatedBirds) => {
+      setBirds(updatedBirds)
+
+      setSelectedBird((currentSelectedBird) => {
+        if (!currentSelectedBird) {
+          return null
+        }
+
+        return (
+          updatedBirds.find(
+            (bird) => bird.id === currentSelectedBird.id,
+          ) || null
+        )
+      })
+    })
+
+    setBirds(birdStore.getBirds())
+
+    return unsubscribe
+  }, [])
 
   useEffect(() => {
     localStorage.setItem(
@@ -214,7 +248,7 @@ function App() {
 
     const duplicate = birds.some(
       (bird) =>
-        bird.ringNumber.toUpperCase() === ringNumber &&
+        String(bird.ringNumber || '').toUpperCase() === ringNumber &&
         bird.id !== editingId,
     )
 
@@ -230,21 +264,37 @@ function App() {
       birdId:
         form.birdId ||
         generateBirdId(birds),
-
       ringNumber,
-
       id:
         editingId ||
-        crypto.randomUUID(),
+        globalThis.crypto?.randomUUID?.() ||
+        `bird-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     }
 
-    setBirds((current) =>
-      editingId
-        ? current.map((bird) =>
-            bird.id === editingId ? savedBird : bird,
-          )
-        : [savedBird, ...current],
-    )
+    if (editingId) {
+      const existingBird = birds.find(
+        (bird) => bird.id === editingId,
+      )
+
+      if (!existingBird) {
+        setError('The bird could not be found.')
+        return
+      }
+
+      birdStore.updateBird(
+        existingBird.ringNumber,
+        savedBird,
+      )
+    } else {
+      const added = birdStore.addBird(savedBird)
+
+      if (!added) {
+        setError(
+          'That ring number is already in the register.',
+        )
+        return
+      }
+    }
 
     setFormOpen(false)
   }
@@ -255,11 +305,7 @@ function App() {
     )
 
     if (confirmed) {
-      setBirds((current) =>
-        current.filter(
-          (item) => item.id !== bird.id,
-        ),
-      )
+      birdStore.deleteBird(bird.ringNumber)
     }
   }
 
@@ -308,12 +354,19 @@ function App() {
     setActivePage('Bird Profile')
   }
 
-function updateBird(updatedBird) {
-  setBirds((current) =>
-    current.map((bird) =>
-      bird.birdId === updatedBird.birdId ? updatedBird : bird
+  function updateBird(updatedBird) {
+    const existingBird = birds.find(
+      (bird) => bird.id === updatedBird.id,
     )
-  );
+
+    if (!existingBird) {
+      return
+    }
+
+    birdStore.updateBird(
+      existingBird.ringNumber,
+      updatedBird,
+    )
   }
 
   function closeBirdProfile() {
@@ -371,10 +424,10 @@ function updateBird(updatedBird) {
 
         {activePage === 'Bird Profile' && (
           <BirdProfile
-    bird={selectedBird}
-    onBack={closeBirdProfile}
-    onUpdateBird={updateBird}
-/>
+            bird={selectedBird}
+            onBack={closeBirdProfile}
+            onUpdateBird={updateBird}
+          />
         )}
 
         {activePage === 'Loft Configuration' && (
