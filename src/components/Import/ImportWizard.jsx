@@ -185,13 +185,14 @@ export default function ImportWizard({
       const worksheet =
         workbook.Sheets[firstSheetName];
 
-      const rawRows = XLSX.utils.sheet_to_json(
-        worksheet,
-        {
-          defval: "",
-          raw: false,
-        }
-      );
+     const rawRows = XLSX.utils.sheet_to_json(
+  worksheet,
+  {
+    defval: "",
+    raw: false,
+    range: 1, // Skip the title row ("2025 YOUNG BIRDS")
+  }
+);
 
       if (!rawRows.length) {
         throw new Error(
