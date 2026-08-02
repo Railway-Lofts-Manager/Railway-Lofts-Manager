@@ -3,28 +3,17 @@ import "../pages/BirdProfile.css";
 import CommandRibbon from "./CommandRibbon";
 import LifeHistoryTiles from "./LifeHistoryTiles";
 
-const tabs = [
-  { id: "overview", label: "Overview", icon: "⌂" },
-  { id: "pedigree", label: "Pedigree", icon: "♜" },
-  { id: "racing", label: "Race Record", icon: "★" },
-  { id: "breeding", label: "Breeding", icon: "◇" },
-  { id: "training", label: "Training", icon: "➤" },
-  { id: "health", label: "Health", icon: "✚" },
-  { id: "photos", label: "Photos", icon: "▣" },
-  { id: "documents", label: "Documents", icon: "▤" },
-  { id: "notes", label: "Notes", icon: "✎" },
-  { id: "timeline", label: "Timeline", icon: "◷" },
-  { id: "archive", label: "Archive", icon: "▰" },
-];
+
 
 export default function BirdProfile({
   bird,
   onBack,
   onUpdateBird,
 }) {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(null);
   const [photo, setPhoto] = useState(bird?.photo || null);
 const fileInputRef = useRef(null);
+const lifeHistoryRef = useRef(null);
 
 const openPhotoPicker = () => {
   fileInputRef.current?.click();
@@ -87,6 +76,27 @@ reader.onload = () => {
     if (!parentId) return;
     console.log("Open parent profile:", parentId);
   };
+const showLifeHistoryView = (tabId) => {
+  setActiveTab(tabId);
+
+  requestAnimationFrame(() => {
+    lifeHistoryRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "start",
+    });
+  });
+};
+
+const returnToLifeHistory = () => {
+  setActiveTab(null);
+
+  requestAnimationFrame(() => {
+    lifeHistoryRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "start",
+    });
+  });
+};
 
   const quickStats = [
     {
@@ -298,28 +308,22 @@ reader.onload = () => {
 </div>
 <CommandRibbon />
 
-<LifeHistoryTiles 
- activeTab={activeTab}
-  onTabChange={setActiveTab}
-/>
-   
-      <section className="profile-tab-navigation command-tabs">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            className={`profile-tab-button ${
-              activeTab === tab.id ? "active" : ""
-            }`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            <span className="command-tab-icon">{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </section>
+      <div ref={lifeHistoryRef} className="life-history-view">
+        {activeTab === null ? (
+          <LifeHistoryTiles onTabChange={showLifeHistoryView} />
+        ) : (
+          <>
+            <div className="life-history-view-toolbar">
+              <button
+                type="button"
+                className="life-history-back-button"
+                onClick={returnToLifeHistory}
+              >
+                ← Life History
+              </button>
+            </div>
 
-      <section className="profile-content panel command-content-panel">
+            <section className="profile-content panel command-content-panel">
         {activeTab === "overview" && (
           <div className="profile-section">
             <SectionHeading
@@ -604,7 +608,10 @@ reader.onload = () => {
             </div>
           </div>
         )}
-      </section>
+            </section>
+          </>
+        )}
+      </div>
     </div>
   );
 }

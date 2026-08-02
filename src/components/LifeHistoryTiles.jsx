@@ -12,7 +12,7 @@ const modules = [
     title: "Pedigree",
   },
   {
-    id: "race",
+    id: "racing",
     icon: "🏁",
     title: "Race Record",
   },
@@ -58,19 +58,14 @@ const modules = [
   },
 ];
 
-export default function LifeHistoryTiles({
-  activeTab,
-  onTabChange,
-}) {
+export default function LifeHistoryTiles({ onTabChange }) {
   return (
     <section className="life-history-tiles">
       {modules.map((module) => (
         <button
           key={module.id}
           type="button"
-          className={`life-tile ${
-            activeTab === module.id ? "active" : ""
-          }`}
+          className="life-tile"
           onClick={() => onTabChange(module.id)}
         >
           <span className="life-tile-icon">
