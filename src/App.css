@@ -811,3 +811,18 @@ background: rgba(255,255,255,0.03);
   object-fit: cover;
   display: block;
 }
+/* ==========================================
+   Bird Register Action Buttons
+   ========================================== */
+
+.register-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.register-actions .primary,
+.register-actions .secondary {
+  white-space: nowrap;
+}

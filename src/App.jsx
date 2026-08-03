@@ -16,6 +16,7 @@ import ReportsAnalytics from "./components/ReportsAnalytics";
 import ArchiveCentre from "./components/ArchiveCentre";
 import Sidebar from "./components/Sidebar";
 import BirdProfile from "./components/BirdProfile";
+import ImportWizard from "./components/Import/ImportWizard";
 import birdStore from "./data/BirdStore";
 
 const emptyBird = {
@@ -154,6 +155,7 @@ function App() {
   const [selectedLoft, setSelectedLoft] = useState(lofts[0])
   const [selectedBox, setSelectedBox] = useState(null)
   const [selectedBird, setSelectedBird] = useState(null)
+const [showImportCentre, setShowImportCentre] = useState(false)
 
   useEffect(() => {
     const unsubscribe = birdStore.subscribe((updatedBirds) => {
@@ -374,6 +376,17 @@ function App() {
     setActivePage('Bird Register')
   }
 
+ function openImportWizard() {
+  setShowImportCentre(true)
+}
+
+function closeImportWizard() {
+  setShowImportCentre(false)
+}
+
+function exportBirds() {
+  alert("Export Birds will be built next.");
+}
   return (
     <div className="app-shell">
       <Sidebar
@@ -407,7 +420,7 @@ function App() {
           />
         )}
 
-        {activePage === 'Bird Register' && (
+        {activePage === 'Bird Register' && !showImportCentre && (
           <BirdRegister
             birds={filteredBirds}
             counts={counts}
@@ -416,6 +429,8 @@ function App() {
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
             openNewBird={openNewBird}
+            openImportWizard={openImportWizard}
+            exportBirds={exportBirds}
             openEditBird={openEditBird}
             deleteBird={deleteBird}
             openBirdProfile={openBirdProfile}
@@ -488,7 +503,16 @@ function App() {
           lofts={lofts}
         />
       )}
-
+{showImportCentre && (
+  <ImportWizard
+    onCancel={closeImportWizard}
+    existingBirds={birds}
+    onImportComplete={() => {
+      setBirds(birdStore.getBirds());
+      closeImportWizard();
+    }}
+  />
+)}
       {selectedBox !== null && (
         <BoxForm
           loft={selectedLoft}

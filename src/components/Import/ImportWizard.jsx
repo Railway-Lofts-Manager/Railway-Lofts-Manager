@@ -209,32 +209,39 @@ export default function ImportWizard({
         );
       }
 
-      const importedBirds = rawRows
-        .map((row) =>
-          createBirdFromRow(row, columnMap)
-        )
-        .filter((bird) => bird.ringNumber);
+ const seenRingNumbers = new Set();
 
-      if (!importedBirds.length) {
-        throw new Error(
-          "No valid ring numbers were found."
-        );
-      }
+const importedBirds = rawRows
+  .map((row) => createBirdFromRow(row, columnMap))
+  .map((bird) => {
+    const ring = normaliseRingNumber(bird.ringNumber);
 
-      const validRows = importedBirds
-        .map((bird, index) => ({
-          bird,
-          index,
-        }))
-        .filter(
-          ({ bird }) =>
-            !existingRingSet.has(
-              normaliseRingNumber(
-                bird.ringNumber
-              )
-            )
-        )
-        .map(({ index }) => index);
+    let importStatus = "ready";
+
+    if (!ring) {
+      importStatus = "invalid";
+    } else if (existingRingSet.has(ring)) {
+      importStatus = "existing";
+    } else if (seenRingNumbers.has(ring)) {
+      importStatus = "duplicate";
+    } else {
+      seenRingNumbers.add(ring);
+    }
+
+    return {
+      ...bird,
+      importStatus,
+    };
+  });
+
+if (!importedBirds.length) {
+  throw new Error("No valid ring numbers were found.");
+}
+
+const validRows = importedBirds
+  .map((bird, index) => ({ bird, index }))
+  .filter(({ bird }) => bird.importStatus === "ready")
+  .map(({ index }) => index);
 
       setBirds(importedBirds);
       setSelectedRows(validRows);

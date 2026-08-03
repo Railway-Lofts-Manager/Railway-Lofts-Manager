@@ -8,21 +8,41 @@ export default function BirdRegister({
   statusFilter,
   setStatusFilter,
   openNewBird,
+  openImportWizard,
+  exportBirds,
   openBirdProfile,
 }) {
   return (
     <>
       <section className="register-toolbar">
         <div>
-          <h3>Master Bird Register</h3>
+        <h3>Master Bird Register</h3>
           <p>
             {counts.total} bird{counts.total === 1 ? "" : "s"} saved on this computer
           </p>
         </div>
+<div className="register-actions">
+  <button
+    className="primary"
+    onClick={openNewBird}
+  >
+    + Add Bird
+  </button>
 
-        <button className="primary" onClick={openNewBird}>
-          + Add Bird
-        </button>
+  <button
+    className="secondary"
+    onClick={openImportWizard}
+  >
+    📥 Import Birds
+  </button>
+
+  <button
+    className="secondary"
+    onClick={exportBirds}
+  >
+    📤 Export Birds
+  </button>
+</div>
       </section>
 
       <section className="filters">

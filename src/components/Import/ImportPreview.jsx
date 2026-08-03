@@ -51,8 +51,11 @@ export default function ImportPreview({
                 .trim()
                 .toUpperCase();
 
-              const alreadyExists =
-                existingSet.has(ringNumber);
+             const result = bird.importStatus;
+
+const alreadyExists = result === "existing";
+const duplicate = result === "duplicate";
+const invalid = result === "invalid";
 
               const isSelected =
                 selectedRows.includes(index);
@@ -69,11 +72,13 @@ export default function ImportPreview({
                   <td>
                     <input
                       type="checkbox"
-                      checked={
-                        isSelected &&
-                        !alreadyExists
-                      }
-                      disabled={alreadyExists}
+                     checked={
+  isSelected &&
+  !alreadyExists &&
+  !duplicate &&
+  !invalid
+}
+                 disabled={alreadyExists || duplicate || invalid}
                       onChange={() =>
                         onToggleRow(index)
                       }
