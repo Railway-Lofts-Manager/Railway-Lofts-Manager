@@ -342,27 +342,23 @@ const validRows = importedBirds
   return (
     <section className="import-wizard">
       <header className="import-wizard-header">
-        <div>
-          <p className="import-wizard-label">
-            LOFT COMMANDER DATA IMPORT
-          </p>
+        
+      <div className="import-title">
+    <p className="import-header-label">
+        DATA IMPORT
+    </p>
 
-          <h2>Import Birds from Excel</h2>
-
-          <p>
-            Select an Excel spreadsheet, review the
-            birds found and import only the records
-            you need.
-          </p>
-        </div>
-
-        {onCancel && (
+    <p className="import-subtitle">
+        Import birds, historical records, backups and future Loft Commander data into your loft database.
+    </p>
+</div>
+         {onCancel && (
           <button
             type="button"
             className="import-cancel-button"
             onClick={onCancel}
           >
-            Close
+          ← Back to Bird Register
           </button>
         )}
       </header>

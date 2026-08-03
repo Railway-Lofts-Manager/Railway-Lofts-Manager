@@ -376,12 +376,13 @@ const [showImportCentre, setShowImportCentre] = useState(false)
     setActivePage('Bird Register')
   }
 
- function openImportWizard() {
-  setShowImportCentre(true)
+function openImportWizard() {
+  setShowImportCentre(true);
+  setActivePage("Import Centre");
 }
-
 function closeImportWizard() {
-  setShowImportCentre(false)
+  setShowImportCentre(false);
+  setActivePage("Bird Register");
 }
 
 function exportBirds() {
@@ -444,6 +445,17 @@ function exportBirds() {
             onUpdateBird={updateBird}
           />
         )}
+        
+        {activePage === "Import Centre" && (
+  <ImportWizard
+    onCancel={closeImportWizard}
+    existingBirds={birds}
+    onImportComplete={() => {
+      setBirds(birdStore.getBirds());
+      closeImportWizard();
+    }}
+  />
+)}
 
         {activePage === 'Loft Configuration' && (
           <LoftConfiguration />
@@ -503,16 +515,7 @@ function exportBirds() {
           lofts={lofts}
         />
       )}
-{showImportCentre && (
-  <ImportWizard
-    onCancel={closeImportWizard}
-    existingBirds={birds}
-    onImportComplete={() => {
-      setBirds(birdStore.getBirds());
-      closeImportWizard();
-    }}
-  />
-)}
+
       {selectedBox !== null && (
         <BoxForm
           loft={selectedLoft}
