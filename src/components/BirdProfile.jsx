@@ -216,7 +216,9 @@ const returnToLifeHistory = () => {
 
               <div className="command-title-row">
                 <div>
-                  <h1>{displayValue(bird.ringNumber, "RING NOT RECORDED")}</h1>
+             <h1 className="command-ring-display">
+  {displayValue(bird.ringNumber, "RING NOT RECORDED")}
+</h1>
 
                   {bird.name && (
                     <h2>
