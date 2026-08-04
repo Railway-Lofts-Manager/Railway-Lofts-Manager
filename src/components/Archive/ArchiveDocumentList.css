@@ -1,0 +1,36 @@
+.archive-library {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.archive-library-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.archive-library-header h3 {
+  margin: 0;
+  color: white;
+  font-size: 2rem;
+}
+
+.archive-document-count {
+  background: #d4af37;
+  color: #10331f;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  font-weight: 700;
+}
+
+.archive-document-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+
+  gap: 24px;
+}

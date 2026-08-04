@@ -3,7 +3,6 @@ export function openArchiveFilePicker(type, callback) {
 
   input.type = "file";
   input.accept = ".pdf,.jpg,.jpeg,.png";
-
   input.style.display = "none";
 
   document.body.appendChild(input);
@@ -16,12 +15,25 @@ export function openArchiveFilePicker(type, callback) {
       return;
     }
 
+    const defaultTitle = file.name.replace(/\.[^/.]+$/, "");
+
+    const title = window.prompt(
+      "Document title:",
+      defaultTitle
+    );
+
+    if (title === null) {
+      document.body.removeChild(input);
+      return;
+    }
+
     const reader = new FileReader();
 
     reader.onload = () => {
       callback({
         id: crypto.randomUUID(),
         type,
+        title,
         name: file.name,
         uploaded: new Date().toLocaleDateString(),
         size: file.size,

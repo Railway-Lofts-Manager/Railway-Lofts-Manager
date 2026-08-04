@@ -1,0 +1,93 @@
+.loft-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.loft-dashboard-header {
+  background: #10331f;
+  border: 2px solid #d4af37;
+  border-radius: 18px;
+  padding: 24px;
+  color: white;
+}
+
+.loft-code {
+  margin: 0;
+  color: #d4af37;
+  font-size: .85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.loft-dashboard-header h2 {
+  margin: 8px 0 0;
+  font-size: 2rem;
+}
+
+.loft-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+  gap: 20px;
+}
+
+.summary-card {
+  background: #10331f;
+  border: 2px solid #d4af37;
+  border-radius: 18px;
+  padding: 24px;
+  text-align: center;
+  color: white;
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 2rem;
+  color: #d4af37;
+}
+
+.summary-card span {
+  display: block;
+  margin-top: 8px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+  gap: 24px;
+}
+
+.dashboard-tile {
+  background: #10331f;
+  border: 2px solid #d4af37;
+  border-radius: 18px;
+  padding: 28px;
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: .2s ease;
+
+  text-align: center;
+}
+
+.dashboard-tile:hover {
+  transform: translateY(-4px);
+
+  box-shadow: 0 14px 35px rgba(0,0,0,.35);
+}
+
+.dashboard-tile span {
+  display: block;
+  font-size: 3rem;
+}
+
+.dashboard-tile h3 {
+  margin: 18px 0 10px;
+}
+
+.dashboard-tile p {
+  margin: 0;
+  color: #d4af37;
+}

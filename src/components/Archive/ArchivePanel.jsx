@@ -1,8 +1,11 @@
+import { useState } from "react";
+
 import "./ArchivePanel.css";
 
 import ArchiveHeader from "./ArchiveHeader";
 import ArchiveUploadGrid from "./ArchiveUploadGrid";
 import ArchiveDocumentList from "./ArchiveDocumentList";
+import ArchiveViewer from "./ArchiveViewer";
 
 import { openArchiveFilePicker } from "./ArchiveUploader";
 
@@ -10,6 +13,8 @@ export default function ArchivePanel({
   bird,
   onUpdateBird,
 }) {
+  const [selectedDocument, setSelectedDocument] = useState(null);
+
   const documents = bird?.documents || [];
 
   function handleUpload(type) {
@@ -32,6 +37,14 @@ export default function ArchivePanel({
     };
 
     onUpdateBird(updatedBird);
+
+    if (selectedDocument?.id === documentId) {
+      setSelectedDocument(null);
+    }
+  }
+
+  function handleOpen(document) {
+    setSelectedDocument(document);
   }
 
   return (
@@ -46,6 +59,12 @@ export default function ArchivePanel({
       <ArchiveDocumentList
         documents={documents}
         onDelete={handleDelete}
+        onOpen={handleOpen}
+      />
+
+      <ArchiveViewer
+        document={selectedDocument}
+        onClose={() => setSelectedDocument(null)}
       />
 
     </div>

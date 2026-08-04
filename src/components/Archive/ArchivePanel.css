@@ -4,9 +4,9 @@
   gap: 28px;
 }
 
-/* ===========================
-   Header
-=========================== */
+/* =====================================
+   HEADER
+===================================== */
 
 .archive-header {
   background: #10331f;
@@ -35,9 +35,9 @@
   line-height: 1.6;
 }
 
-/* ===========================
-   Upload Grid
-=========================== */
+/* =====================================
+   UPLOAD GRID
+===================================== */
 
 .archive-upload-grid {
   display: grid;
@@ -51,12 +51,15 @@
   border: 2px solid #d4af37;
   border-radius: 18px;
   padding: 28px;
-  cursor: pointer;
-  transition: all .25s ease;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
+
+  cursor: pointer;
+
+  transition: .25s ease;
 }
 
 .archive-upload-card:hover {
@@ -68,72 +71,11 @@
   font-size: 42px;
 }
 
-.archive-upload-card strong {
-  font-size: 1.15rem;
-  color: white;
-}
-
-/* ===========================
-   Library
-=========================== */
-
-.archive-library {
-  background: #10331f;
-  border: 2px solid #d4af37;
-  border-radius: 18px;
-  padding: 24px;
-}
-
-.archive-library h3 {
-  margin: 0 0 20px;
-  color: white;
-  font-size: 1.35rem;
-}
-
-/* ===========================
-   Empty State
-=========================== */
+/* =====================================
+   EMPTY STATE
+===================================== */
 
 .archive-empty {
-  color: #c9d5cc;
+  color: #d8e4da;
   font-style: italic;
-  padding: 18px 0;
-}
-
-/* ===========================
-   Document Row
-=========================== */
-
-.archive-document {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 18px 0;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-
-.archive-document:last-child {
-  border-bottom: none;
-}
-
-.archive-document-icon {
-  font-size: 2rem;
-  width: 46px;
-  text-align: center;
-}
-
-.archive-document-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.archive-document-details strong {
-  color: white;
-  font-size: 1.05rem;
-  margin-bottom: 4px;
-}
-
-.archive-document-details small {
-  color: #d4af37;
-  font-size: .9rem;
 }
