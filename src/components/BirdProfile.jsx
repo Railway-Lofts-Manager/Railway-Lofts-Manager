@@ -13,6 +13,7 @@ export default function BirdProfile({
 }) {
   const [activeTab, setActiveTab] = useState(null);
   const [photo, setPhoto] = useState(bird?.photo || null);
+  const [isEditing, setIsEditing] = useState(false);
 const fileInputRef = useRef(null);
 const lifeHistoryRef = useRef(null);
 
@@ -273,19 +274,33 @@ const returnToLifeHistory = () => {
               </div>
             </div>
 
-            <div className="command-actions">
-              <button type="button" className="command-primary-action">
-                Edit Bird Profile
-              </button>
+           <div className="command-actions">
+  <button
+    type="button"
+    className="command-primary-action"
+    onClick={() => setIsEditing(true)}
+  >
+    Edit Bird Profile
+  </button>
 
-              <button type="button" className="command-secondary-action">
-                Print Record
-              </button>
+  <button
+    type="button"
+    className="command-secondary-action"
+    disabled
+    title="Coming Soon"
+  >
+    Print Record
+  </button>
 
-              <button type="button" className="command-secondary-action">
-                Export Profile
-              </button>
-            </div>
+  <button
+    type="button"
+    className="command-secondary-action"
+    disabled
+    title="Coming Soon"
+  >
+    Export Profile
+  </button>
+</div>
           </div>
         </div>
       </section>

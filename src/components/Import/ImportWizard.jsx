@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
 import ImportPreview from "./ImportPreview";
 import birdStore from "../../data/BirdStore";
 import "./ImportWizard.css";
+import ExcelImportWizard from "./ExcelImportWizard";
 
 const COLUMN_ALIASES = {
   ringNumber: [
@@ -128,6 +129,8 @@ export default function ImportWizard({
   const [isReading, setIsReading] = useState(false);
   const [isImporting, setIsImporting] =
     useState(false);
+  const [activeWizard, setActiveWizard] = useState(null);
+  const excelFileInputRef = useRef(null);
 
   const existingRingNumbers = useMemo(() => {
     const propBirds = existingBirds.map(
@@ -340,114 +343,179 @@ const validRows = importedBirds
   };
 
   return (
-    <section className="import-wizard">
-      <header className="import-wizard-header">
-        
-      <div className="import-title">
-    <p className="import-header-label">
-        DATA IMPORT
-    </p>
+  <section className="import-wizard">
+      <input
+        ref={excelFileInputRef}
+        id="excel-file-input"
+        type="file"
+        accept=".xlsx,.xls"
+        onChange={handleFileSelected}
+        disabled={isReading || isImporting}
+        hidden
+      />
 
-    <p className="import-subtitle">
-        Import birds, historical records, backups and future Loft Commander data into your loft database.
-    </p>
-</div>
-         {onCancel && (
-          <button
-            type="button"
-            className="import-cancel-button"
-            onClick={onCancel}
-          >
-          ← Back to Bird Register
-          </button>
-        )}
-      </header>
-
-      <div className="import-file-panel">
-        <label className="import-file-button">
-          <span>📊</span>
-
-          <strong>
-            {isReading
-              ? "Reading spreadsheet..."
-              : "Choose Excel File"}
-          </strong>
-
-          <small>
-            Supports .xlsx and .xls files
-          </small>
-
-          <input
-            type="file"
-            accept=".xlsx,.xls"
-            onChange={handleFileSelected}
-            disabled={isReading || isImporting}
-          />
-        </label>
-
-        {fileName && (
-          <div className="import-file-details">
-            <span>Selected file</span>
-            <strong>{fileName}</strong>
-          </div>
-        )}
-      </div>
-
-      {message && (
-        <div className="import-message">
-          {message}
-        </div>
-      )}
-
-      {birds.length > 0 && (
+      {activeWizard === "excel" ? (
         <>
-          <div className="import-selection-toolbar">
-            <button
-              type="button"
-              onClick={handleSelectAll}
-            >
-              Select all new birds
-            </button>
-
-            <button
-              type="button"
-              onClick={handleClearSelection}
-            >
-              Clear selection
-            </button>
-          </div>
-
-          <ImportPreview
-            birds={birds}
-            selectedRows={selectedRows}
-            onToggleRow={handleToggleRow}
-            existingRingNumbers={
-              existingRingNumbers
-            }
+          <ExcelImportWizard
+            onBack={() => setActiveWizard(null)}
+            onChooseWorkbook={() => {
+              excelFileInputRef.current?.click();
+            }}
           />
 
-          <footer className="import-wizard-footer">
-            <div>
-              <strong>
-                {selectedBirds.length}
-              </strong>
-              <span> birds selected</span>
+          {message && (
+            <div className="import-message">
+              {message}
+            </div>
+          )}
+
+          {birds.length > 0 && (
+            <>
+              <div className="import-selection-toolbar">
+                <button
+                  type="button"
+                  onClick={handleSelectAll}
+                >
+                  Select all new birds
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClearSelection}
+                >
+                  Clear selection
+                </button>
+              </div>
+
+              <ImportPreview
+                birds={birds}
+                selectedRows={selectedRows}
+                onToggleRow={handleToggleRow}
+                existingRingNumbers={existingRingNumbers}
+              />
+
+              <footer className="import-wizard-footer">
+                <div>
+                  <strong>{selectedBirds.length}</strong>
+                  <span> birds selected</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="import-confirm-button"
+                  onClick={handleImport}
+                  disabled={
+                    isImporting ||
+                    selectedBirds.length === 0
+                  }
+                >
+                  {isImporting
+                    ? "Importing..."
+                    : `Import ${selectedBirds.length} Birds`}
+                </button>
+              </footer>
+            </>
+          )}
+        </>
+      ) : (
+        <>
+          <header className="import-wizard-header">
+            <div className="import-title">
+              <p className="import-header-label">
+                DATA IMPORT
+              </p>
+
+              <p className="import-subtitle">
+                Import birds, historical records, backups and future
+                Loft Commander data into your loft database.
+              </p>
             </div>
 
+            {onCancel && (
+              <button
+                type="button"
+                className="import-cancel-button"
+                onClick={onCancel}
+              >
+                ← Back to Bird Register
+              </button>
+            )}
+          </header>
+
+          <div className="import-method-grid">
             <button
               type="button"
-              className="import-confirm-button"
-              onClick={handleImport}
-              disabled={
-                isImporting ||
-                selectedBirds.length === 0
-              }
+              className="import-method-card active"
+              onClick={() => setActiveWizard("excel")}
             >
-              {isImporting
-                ? "Importing..."
-                : `Import ${selectedBirds.length} Birds`}
+              <div className="import-method-icon">📊</div>
+
+              <h3>Excel Workbook</h3>
+
+              <p>
+                Import birds from an existing Excel spreadsheet.
+              </p>
+
+              <span className="import-method-status">
+                Open →
+              </span>
             </button>
-          </footer>
+
+            <button
+              type="button"
+              className="import-method-card"
+              disabled
+            >
+              <div className="import-method-icon">📂</div>
+
+              <h3>Historical Archive</h3>
+
+              <p>
+                Import pedigrees, handwritten notes and historical
+                documents.
+              </p>
+
+              <span className="import-method-status">
+                Coming Soon
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="import-method-card"
+              disabled
+            >
+              <div className="import-method-icon">☁</div>
+
+              <h3>Restore Backup</h3>
+
+              <p>
+                Restore a previous Loft Commander backup.
+              </p>
+
+              <span className="import-method-status">
+                Coming Soon
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="import-method-card"
+              disabled
+            >
+              <div className="import-method-icon">🌐</div>
+
+              <h3>Another Loft Commander</h3>
+
+              <p>
+                Transfer birds from another Loft Commander database.
+              </p>
+
+              <span className="import-method-status">
+                Coming Soon
+              </span>
+            </button>
+          </div>
         </>
       )}
     </section>
