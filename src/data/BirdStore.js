@@ -9,6 +9,9 @@ class BirdStore {
   constructor() {
     this.listeners = [];
     this.birds = this.loadFromStorage();
+
+    // Repairs missing or duplicated internal LC IDs.
+    this.repairBirdIds();
   }
 
   // -------------------------
@@ -19,7 +22,9 @@ class BirdStore {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
 
-      if (!saved) return [];
+      if (!saved) {
+        return [];
+      }
 
       const birds = JSON.parse(saved);
 
@@ -42,7 +47,7 @@ class BirdStore {
   }
 
   // -------------------------
-  // Subscribe
+  // Subscriptions
   // -------------------------
 
   subscribe(listener) {
@@ -50,7 +55,7 @@ class BirdStore {
 
     return () => {
       this.listeners = this.listeners.filter(
-        (l) => l !== listener
+        (currentListener) => currentListener !== listener
       );
     };
   }
@@ -58,9 +63,76 @@ class BirdStore {
   notify() {
     this.saveToStorage();
 
-    this.listeners.forEach((listener) =>
-      listener(this.getBirds())
-    );
+    this.listeners.forEach((listener) => {
+      listener(this.getBirds());
+    });
+  }
+
+  // -------------------------
+  // Bird ID Management
+  // -------------------------
+
+  getBirdIdNumber(birdId) {
+    const match = String(birdId || "").match(/^LC-(\d+)$/);
+
+    return match ? Number(match[1]) : null;
+  }
+
+  generateBirdId() {
+    const usedNumbers = this.birds
+      .map((bird) => this.getBirdIdNumber(bird.birdId))
+      .filter((number) => Number.isInteger(number));
+
+    const nextNumber = usedNumbers.length
+      ? Math.max(...usedNumbers) + 1
+      : 1;
+
+    return `LC-${String(nextNumber).padStart(6, "0")}`;
+  }
+
+  repairBirdIds() {
+    const usedIds = new Set();
+    let highestNumber = 0;
+    let changed = false;
+
+    this.birds.forEach((bird) => {
+      const number = this.getBirdIdNumber(bird.birdId);
+
+      if (number !== null) {
+        highestNumber = Math.max(highestNumber, number);
+      }
+    });
+
+    this.birds = this.birds.map((bird) => {
+      const existingId = String(bird.birdId || "");
+      const number = this.getBirdIdNumber(existingId);
+
+      const idIsValid =
+        number !== null &&
+        !usedIds.has(existingId);
+
+      if (idIsValid) {
+        usedIds.add(existingId);
+        return bird;
+      }
+
+      changed = true;
+      highestNumber += 1;
+
+      const newBirdId =
+        `LC-${String(highestNumber).padStart(6, "0")}`;
+
+      usedIds.add(newBirdId);
+
+      return {
+        ...bird,
+        birdId: newBirdId,
+      };
+    });
+
+    if (changed) {
+      this.saveToStorage();
+    }
   }
 
   // -------------------------
@@ -72,8 +144,15 @@ class BirdStore {
   }
 
   getBird(ringNumber) {
+    const normalisedRing = String(ringNumber || "")
+      .trim()
+      .toUpperCase();
+
     return this.birds.find(
-      (bird) => bird.ringNumber === ringNumber
+      (bird) =>
+        String(bird.ringNumber || "")
+          .trim()
+          .toUpperCase() === normalisedRing
     );
   }
 
@@ -82,19 +161,34 @@ class BirdStore {
   // -------------------------
 
   addBird(bird) {
+    const normalisedRing = String(bird.ringNumber || "")
+      .trim()
+      .toUpperCase();
+
+    if (!normalisedRing) {
+      return false;
+    }
+
     const exists = this.birds.some(
-      (b) => b.ringNumber === bird.ringNumber
+      (existingBird) =>
+        String(existingBird.ringNumber || "")
+          .trim()
+          .toUpperCase() === normalisedRing
     );
 
     if (exists) {
       return false;
     }
 
-    this.birds.push({
+    const newBird = {
       ...bird,
-      createdAt: bird.createdAt || new Date().toISOString(),
-    });
+      ringNumber: normalisedRing,
+      birdId: bird.birdId || this.generateBirdId(),
+      createdAt:
+        bird.createdAt || new Date().toISOString(),
+    };
 
+    this.birds.push(newBird);
     this.notify();
 
     return true;
@@ -105,23 +199,46 @@ class BirdStore {
   // -------------------------
 
   updateBird(ringNumber, updates) {
-    this.birds = this.birds.map((bird) =>
-      bird.ringNumber === ringNumber
-        ? { ...bird, ...updates }
-        : bird
-    );
+    const normalisedRing = String(ringNumber || "")
+      .trim()
+      .toUpperCase();
+
+    this.birds = this.birds.map((bird) => {
+      const currentRing = String(bird.ringNumber || "")
+        .trim()
+        .toUpperCase();
+
+      if (currentRing !== normalisedRing) {
+        return bird;
+      }
+
+      return {
+        ...bird,
+        ...updates,
+
+        // Never replace the permanent internal ID accidentally.
+        birdId: bird.birdId || updates.birdId,
+        updatedAt: new Date().toISOString(),
+      };
+    });
 
     this.notify();
   }
 
   // -------------------------
   // Delete Bird
-  // Later becomes Archive
   // -------------------------
 
   deleteBird(ringNumber) {
+    const normalisedRing = String(ringNumber || "")
+      .trim()
+      .toUpperCase();
+
     this.birds = this.birds.filter(
-      (bird) => bird.ringNumber !== ringNumber
+      (bird) =>
+        String(bird.ringNumber || "")
+          .trim()
+          .toUpperCase() !== normalisedRing
     );
 
     this.notify();
@@ -136,7 +253,7 @@ class BirdStore {
 
     birds.forEach((bird) => {
       if (this.addBird(bird)) {
-        imported++;
+        imported += 1;
       }
     });
 
@@ -144,7 +261,7 @@ class BirdStore {
   }
 
   // -------------------------
-  // Development
+  // Development / Reset
   // -------------------------
 
   clear() {

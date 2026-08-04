@@ -1,71 +1,52 @@
 import "./ArchivePanel.css";
 
-export default function ArchivePanel({ bird }) {
+import ArchiveHeader from "./ArchiveHeader";
+import ArchiveUploadGrid from "./ArchiveUploadGrid";
+import ArchiveDocumentList from "./ArchiveDocumentList";
+
+import { openArchiveFilePicker } from "./ArchiveUploader";
+
+export default function ArchivePanel({
+  bird,
+  onUpdateBird,
+}) {
   const documents = bird?.documents || [];
+
+  function handleUpload(type) {
+    openArchiveFilePicker(type, (document) => {
+      const updatedBird = {
+        ...bird,
+        documents: [...documents, document],
+      };
+
+      onUpdateBird(updatedBird);
+    });
+  }
+
+  function handleDelete(documentId) {
+    const updatedBird = {
+      ...bird,
+      documents: documents.filter(
+        (doc) => doc.id !== documentId
+      ),
+    };
+
+    onUpdateBird(updatedBird);
+  }
 
   return (
     <div className="archive-panel">
 
-      <div className="archive-header">
-        <p className="archive-label">PERMANENT BIRD RECORD</p>
-        <h2>Archive Intelligence</h2>
-        <p className="archive-intro">
-          Preserve every important document, photograph and historical record
-          connected to this bird.
-        </p>
-      </div>
+      <ArchiveHeader />
 
-      <div className="archive-upload-grid">
+      <ArchiveUploadGrid
+        onUpload={handleUpload}
+      />
 
-        <button className="archive-upload-card">
-          <span>📷</span>
-          <strong>Upload Photograph</strong>
-        </button>
-
-        <button className="archive-upload-card">
-          <span>📄</span>
-          <strong>Upload Pedigree</strong>
-        </button>
-
-        <button className="archive-upload-card">
-          <span>🏆</span>
-          <strong>Upload Certificate</strong>
-        </button>
-
-        <button className="archive-upload-card">
-          <span>🏁</span>
-          <strong>Upload Race Sheet</strong>
-        </button>
-
-        <button className="archive-upload-card">
-          <span>✍️</span>
-          <strong>Handwritten Record</strong>
-        </button>
-
-        <button className="archive-upload-card">
-          <span>📁</span>
-          <strong>Other Document</strong>
-        </button>
-
-      </div>
-
-      <div className="archive-library">
-
-        <h3>Document Library</h3>
-
-        {documents.length === 0 ? (
-          <div className="archive-empty">
-            No archive documents have been uploaded yet.
-          </div>
-        ) : (
-          documents.map((doc, index) => (
-            <div className="archive-document" key={index}>
-              📄 {doc.name}
-            </div>
-          ))
-        )}
-
-      </div>
+      <ArchiveDocumentList
+        documents={documents}
+        onDelete={handleDelete}
+      />
 
     </div>
   );

@@ -4,6 +4,10 @@
   gap: 28px;
 }
 
+/* ===========================
+   Header
+=========================== */
+
 .archive-header {
   background: #10331f;
   border: 2px solid #d4af37;
@@ -31,6 +35,10 @@
   line-height: 1.6;
 }
 
+/* ===========================
+   Upload Grid
+=========================== */
+
 .archive-upload-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -53,29 +61,79 @@
 
 .archive-upload-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
 }
 
 .archive-upload-card span {
   font-size: 42px;
 }
 
+.archive-upload-card strong {
+  font-size: 1.15rem;
+  color: white;
+}
+
+/* ===========================
+   Library
+=========================== */
+
 .archive-library {
-  background: white;
+  background: #10331f;
+  border: 2px solid #d4af37;
   border-radius: 18px;
   padding: 24px;
 }
 
 .archive-library h3 {
-  margin-top: 0;
+  margin: 0 0 20px;
+  color: white;
+  font-size: 1.35rem;
 }
+
+/* ===========================
+   Empty State
+=========================== */
 
 .archive-empty {
-  color: #666;
+  color: #c9d5cc;
   font-style: italic;
+  padding: 18px 0;
 }
 
+/* ===========================
+   Document Row
+=========================== */
+
 .archive-document {
-  padding: 14px;
-  border-bottom: 1px solid #ececec;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.archive-document:last-child {
+  border-bottom: none;
+}
+
+.archive-document-icon {
+  font-size: 2rem;
+  width: 46px;
+  text-align: center;
+}
+
+.archive-document-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-document-details strong {
+  color: white;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.archive-document-details small {
+  color: #d4af37;
+  font-size: .9rem;
 }

@@ -16,33 +16,34 @@ export default function BirdRegister({
     <>
       <section className="register-toolbar">
         <div>
-        <h3>Master Bird Register</h3>
+          <h3>Master Bird Register</h3>
           <p>
             {counts.total} bird{counts.total === 1 ? "" : "s"} saved on this computer
           </p>
         </div>
-<div className="register-actions">
-  <button
-    className="primary"
-    onClick={openNewBird}
-  >
-    + Add Bird
-  </button>
 
-  <button
-    className="secondary"
-    onClick={openImportWizard}
-  >
-    📥 Import Birds
-  </button>
+        <div className="register-actions">
+          <button
+            className="primary"
+            onClick={openNewBird}
+          >
+            + Add Bird
+          </button>
 
-  <button
-    className="secondary"
-    onClick={exportBirds}
-  >
-    📤 Export Birds
-  </button>
-</div>
+          <button
+            className="secondary"
+            onClick={openImportWizard}
+          >
+            📥 Import Birds
+          </button>
+
+          <button
+            className="secondary"
+            onClick={exportBirds}
+          >
+            📤 Export Birds
+          </button>
+        </div>
       </section>
 
       <section className="filters">
@@ -50,7 +51,7 @@ export default function BirdRegister({
           aria-label="Search birds"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search Bird ID, Ring Number, Name, Breed or Loft..."
+          placeholder="Search Ring Number, Name, Breed or Loft..."
         />
 
         <select
@@ -71,7 +72,6 @@ export default function BirdRegister({
             <table>
               <thead>
                 <tr>
-                  <th>Bird ID</th>
                   <th>Ring Number</th>
                   <th>Name</th>
                   <th>Breed</th>
@@ -85,11 +85,7 @@ export default function BirdRegister({
 
               <tbody>
                 {birds.map((bird) => (
-                  <tr key={bird.id}>
-                    <td>
-                      <strong>{bird.birdId || "—"}</strong>
-                    </td>
-
+                  <tr key={bird.id ?? bird.ringNumber}>
                     <td>
                       <button
                         type="button"
@@ -98,22 +94,22 @@ export default function BirdRegister({
                       >
                         {bird.ringNumber}
                       </button>
-                      <br />
-                      <small>{bird.year}</small>
                     </td>
 
                     <td>{bird.name || "—"}</td>
                     <td>{bird.breed || "—"}</td>
-                    <td>{bird.sex}</td>
+                    <td>{bird.sex || "—"}</td>
                     <td>{bird.colour || "—"}</td>
 
                     <td>
                       <span
-                        className={`status status-${bird.status
+                        className={`status status-${String(
+                          bird.status || "unknown"
+                        )
                           .toLowerCase()
-                          .replace(" ", "-")}`}
+                          .replace(/\s+/g, "-")}`}
                       >
-                        {bird.status}
+                        {bird.status || "Unknown"}
                       </span>
                     </td>
 
@@ -130,7 +126,10 @@ export default function BirdRegister({
             <h3>No birds found</h3>
             <p>Change the search or add your first pigeon.</p>
 
-            <button className="primary" onClick={openNewBird}>
+            <button
+              className="primary"
+              onClick={openNewBird}
+            >
               + Add Bird
             </button>
           </div>
