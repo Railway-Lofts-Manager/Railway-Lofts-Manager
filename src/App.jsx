@@ -92,9 +92,9 @@ function loadLegacyBirds() {
       return Array.isArray(parsed) ? parsed : []
     }
 
-    return starterBirds
+    return []
   } catch {
-    return starterBirds
+   return []
   }
 }
 
