@@ -1,0 +1,39 @@
+.customer-details-form {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+  min-height: 0;
+}
+
+.customer-details-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.customer-details-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.customer-details-form input {
+  min-height: 46px;
+  padding: 10px 12px;
+}
+
+.customer-details-form button {
+  min-height: 48px;
+  justify-self: start;
+}
+
+@media (max-width: 700px) {
+  .customer-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-details-form button {
+    width: 100%;
+  }
+}

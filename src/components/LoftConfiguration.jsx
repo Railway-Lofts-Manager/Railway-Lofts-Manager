@@ -1,73 +1,56 @@
-import lofts from '../data/lofts'
+import { useState } from "react";
+import useLofts from "../hooks/useLofts";
+import loftStore from "../data/LoftStore";
+import LoftConfigurationHeader from
+  "./LoftConfiguration/LoftConfigurationHeader";
+import LoftConfigurationList from
+  "./LoftConfiguration/LoftConfigurationList";
+import LoftForm from
+  "./LoftConfiguration/LoftForm";
 
-function LoftConfiguration() {
+export default function LoftConfiguration() {
+  const lofts = useLofts();
+  const [editingLoft, setEditingLoft] =
+    useState(null);
+  const [addingLoft, setAddingLoft] =
+    useState(false);
+
+  function saveLoft(loft) {
+    if (editingLoft) {
+      loftStore.updateLoft(editingLoft.id, loft);
+    } else {
+      loftStore.addLoft({
+        ...loft,
+        id: `loft-${Date.now()}`,
+      });
+    }
+
+    setEditingLoft(null);
+    setAddingLoft(false);
+  }
+
+  const formOpen = addingLoft || editingLoft;
+
   return (
     <>
-      <section className="panel" style={{ marginBottom: '16px' }}>
-        <h2>Loft Configuration</h2>
+      <LoftConfigurationHeader />
 
-        <p className="muted">
-          Configure all lofts used within Loft Commander.
-        </p>
-      </section>
+      {formOpen && (
+        <LoftForm
+          loft={editingLoft}
+          onSave={saveLoft}
+          onCancel={() => {
+            setEditingLoft(null);
+            setAddingLoft(false);
+          }}
+        />
+      )}
 
-      <section
-        style={{
-          display: 'grid',
-          gridTemplateColumns:
-            'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '16px',
-        }}
-      >
-        {lofts.map((loft) => (
-          <div
-            key={loft.id}
-            className="panel"
-            style={{
-              borderLeft: `8px solid ${loft.colour}`,
-            }}
-          >
-            <h3>{loft.name}</h3>
-
-            <p>
-  <strong>Status:</strong>{' '}
-  <span
-    style={{
-      color:
-        loft.status === 'in-use'
-          ? 'green'
-          : 'red',
-      fontWeight: 'bold',
-    }}
-  >
-    {loft.status === 'in-use'
-      ? 'In Use'
-      : 'Not In Use'}
-  </span>
-</p>
-
-            <p>
-              <strong>Nest Boxes:</strong>{' '}
-              {loft.boxes}
-            </p>
-
-            <button className="primary">
-              Edit Loft
-            </button>
-          </div>
-        ))}
-      </section>
-
-      <section
-        className="panel"
-        style={{ marginTop: '16px' }}
-      >
-        <button className="primary">
-          + Add Loft
-        </button>
-      </section>
+      <LoftConfigurationList
+        lofts={lofts}
+        onEditLoft={setEditingLoft}
+        onAddLoft={() => setAddingLoft(true)}
+      />
     </>
-  )
+  );
 }
-
-export default LoftConfiguration

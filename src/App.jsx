@@ -8,6 +8,7 @@ import BreedingCentre from "./components/BreedingCentre";
 import LoftView from "./components/LoftView";
 import lofts from './data/lofts'
 import LoftConfiguration from './components/LoftConfiguration'
+import SetupPage from "./components/Setup/SetupPage";
 import Dashboard from "./components/Dashboard";
 import RaceCentre from "./components/RaceCentre";
 import HealthCentre from "./components/HealthCentre";
@@ -15,9 +16,11 @@ import SeasonPlanner from "./components/SeasonPlanner";
 import ReportsAnalytics from "./components/ReportsAnalytics";
 import ArchiveCentre from "./components/ArchiveCentre";
 import Sidebar from "./components/Sidebar";
+import Topbar from "./components/Topbar";
 import BirdProfile from "./components/BirdProfile";
 import ImportWizard from "./components/Import/ImportWizard";
 import birdStore from "./data/BirdStore";
+import getInitialPage from "./data/InitialPage";
 
 const emptyBird = {
   birdId: '',
@@ -140,7 +143,7 @@ function generateBirdId(existingBirds) {
 }
 
 function App() {
-  const [activePage, setActivePage] = useState('Command Centre')
+ const [activePage, setActivePage] = useState(getInitialPage)
   const [birds, setBirds] = useState(initialiseBirdStore)
   const [boxAssignments, setBoxAssignments] = useState(loadBoxes)
 
@@ -396,22 +399,7 @@ function exportBirds() {
       />
 
       <main className="main-content">
-        <header className="topbar">
-          <div>
-            <p className="eyebrow">
-              Welcome back, Shane
-            </p>
-
-            <h2>{activePage}</h2>
-          </div>
-
-          <div className="season">
-            <span>Season</span>
-            <strong>
-              {new Date().getFullYear()}
-            </strong>
-          </div>
-        </header>
+     <Topbar activePage={activePage} />
 
         {activePage === 'Command Centre' && (
           <CommandCentre
@@ -460,6 +448,17 @@ function exportBirds() {
         {activePage === 'Loft Configuration' && (
           <LoftConfiguration />
         )}
+
+{activePage === 'Setup' && (
+  <SetupPage
+    onOpenLoftConfiguration={() =>
+      setActivePage('Loft Configuration')
+    }
+    onComplete={() =>
+      setActivePage('Command Centre')
+    }
+  />
+)}
 
         {activePage === 'Breeding Centre' && (
           <BreedingCentre

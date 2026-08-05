@@ -1,0 +1,31 @@
+.loft-configuration-card {
+  padding: 22px;
+  border-left: 8px solid var(--loft-colour);
+}
+
+.loft-configuration-card h3 {
+  margin: 0 0 6px;
+}
+
+.loft-configuration-code {
+  margin: 0 0 16px;
+  color: #6f776f;
+  font-weight: 700;
+}
+
+.loft-configuration-details {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.loft-configuration-details span {
+  display: block;
+  color: #6f776f;
+  font-size: 0.85rem;
+}
+
+.loft-configuration-card button {
+  min-height: 44px;
+}

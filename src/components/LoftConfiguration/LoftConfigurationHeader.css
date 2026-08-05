@@ -1,0 +1,19 @@
+.loft-configuration-header {
+  margin-bottom: 16px;
+}
+
+.loft-configuration-label {
+  margin: 0 0 6px;
+  color: #a67c16;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.loft-configuration-header h2 {
+  margin: 0 0 8px;
+}
+
+.loft-configuration-header p:last-child {
+  margin-bottom: 0;
+}

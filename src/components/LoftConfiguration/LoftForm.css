@@ -1,0 +1,34 @@
+.loft-form {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.loft-form-row {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.loft-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.loft-form input,
+.loft-form select {
+  min-height: 46px;
+  padding: 10px 12px;
+}
+
+.loft-form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.loft-form-actions button {
+  min-height: 46px;
+}

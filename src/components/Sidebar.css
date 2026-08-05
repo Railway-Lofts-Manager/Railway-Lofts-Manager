@@ -1,0 +1,48 @@
+.sidebar {
+  box-sizing: border-box;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+nav.sidebar-main-navigation {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+nav.sidebar-setup-navigation {
+  display: grid;
+  flex: 0 0 auto;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ffffff26;
+}
+
+.sidebar-setup-navigation button {
+  width: 100%;
+}
+
+.sidebar .version {
+  flex: 0 0 auto;
+  margin: 8px 8px 0;
+}
+
+@media (max-width: 720px) {
+  .sidebar {
+    max-height: none;
+    overflow: visible;
+  }
+
+  nav.sidebar-main-navigation {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-right: 0;
+  }
+
+  nav.sidebar-setup-navigation {
+    border-top: 0;
+    padding-top: 0;
+  }
+}

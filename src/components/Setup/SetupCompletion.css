@@ -1,0 +1,38 @@
+.setup-completion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 0;
+  border: 1px solid #285d39;
+  background: #edf4ee;
+}
+
+.setup-completion h3 {
+  margin-bottom: 6px;
+}
+
+.setup-completion p {
+  margin: 0;
+}
+
+.setup-completion button {
+  flex: 0 0 auto;
+  min-height: 48px;
+}
+
+.setup-completion-status {
+  color: #216133;
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .setup-completion {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .setup-completion button {
+    width: 100%;
+  }
+}

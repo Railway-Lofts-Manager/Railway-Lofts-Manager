@@ -1,0 +1,61 @@
+.setup-page {
+  display: grid;
+  gap: 18px;
+}
+
+.setup-header {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  padding: 28px;
+  border: 1px solid #285d39;
+  background:
+    linear-gradient(135deg, #10251a, #173923);
+  color: #f5f8f4;
+}
+
+.setup-header::after {
+  content: "LC";
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  color: rgba(212, 175, 55, 0.16);
+  font-size: 5rem;
+  font-weight: 900;
+  transform: translateY(-50%);
+}
+
+.setup-label {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 8px;
+  color: #f0d878;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.setup-header h2 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 8px;
+  color: #ffffff;
+}
+
+.setup-header .muted {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #d7e5da;
+}
+
+@media (max-width: 700px) {
+  .setup-header {
+    padding: 22px;
+  }
+
+  .setup-header::after {
+    right: 18px;
+    font-size: 3.8rem;
+  }
+}

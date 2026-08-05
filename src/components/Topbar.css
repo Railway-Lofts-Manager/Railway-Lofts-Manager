@@ -1,0 +1,9 @@
+.topbar-customer-name {
+  text-transform: uppercase;
+}
+
+@media (max-width: 460px) {
+  .topbar-customer-name {
+    font-size: 0.75rem;
+  }
+}
