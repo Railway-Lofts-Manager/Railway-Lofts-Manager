@@ -1,0 +1,18 @@
+.available-ring-select {
+  display: grid;
+  gap: 6px;
+}
+
+.available-ring-select select {
+  min-height: 44px;
+}
+
+.available-ring-select small {
+  color: #718077;
+  font-weight: 500;
+}
+
+.available-ring-select .available-ring-error {
+  color: #a53d37;
+  font-weight: 700;
+}
