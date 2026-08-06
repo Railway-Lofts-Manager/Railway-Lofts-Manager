@@ -1,0 +1,101 @@
+.ring-release-open {
+  width: fit-content;
+  padding: 7px 10px;
+  border: 1px solid #b18423;
+  border-radius: 7px;
+  color: #684900;
+  background: #fff2c9;
+  font-weight: 800;
+}
+
+.ring-release-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(7, 16, 12, 0.84);
+}
+
+.ring-release-modal {
+  width: min(580px, 100%);
+  padding: 22px;
+  border: 2px solid #d4af37;
+  border-radius: 16px;
+  color: #17351f;
+  background: #f5f8f4;
+  box-shadow: 0 25px 70px #0008;
+}
+
+.ring-release-modal header,
+.ring-release-modal footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ring-release-modal header p,
+.ring-release-modal header h3 {
+  margin: 0;
+}
+
+.ring-release-modal header p {
+  margin-bottom: 5px;
+  color: #b18423;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.ring-release-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.ring-release-fields label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.ring-release-fields input,
+.ring-release-fields select,
+.ring-release-fields textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid #ccd6ce;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.ring-release-notes {
+  grid-column: 1 / -1;
+}
+
+.ring-release-modal footer {
+  justify-content: flex-end;
+}
+
+.ring-release-error {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #92352f;
+  background: #fde9e7;
+  font-weight: 700;
+}
+
+@media (max-width: 650px) {
+  .ring-release-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .ring-release-notes {
+    grid-column: auto;
+  }
+}

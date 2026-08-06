@@ -40,6 +40,9 @@ class RingStore {
       ringNumber,
       status: "available",
       assignedBirdId: "",
+      assignedEntryId: "",
+      assignedAt: "",
+      assignmentHistory: [],
       batchId,
       createdAt,
     }));
@@ -53,6 +56,7 @@ class RingStore {
     entryId,
     currentRingNumber,
     nextRingNumber,
+    releaseDetails = null,
   ) {
     const current = currentRingNumber.toUpperCase();
     const next = nextRingNumber.toUpperCase();
@@ -77,6 +81,16 @@ class RingStore {
           ...ring,
           status: "available",
           assignedEntryId: "",
+          assignedAt: "",
+          assignmentHistory: releaseDetails
+            ? [
+                ...(ring.assignmentHistory || []),
+                {
+                  ...releaseDetails,
+                  assignedAt: ring.assignedAt || "",
+                },
+              ]
+            : ring.assignmentHistory || [],
         };
       }
 
@@ -85,6 +99,7 @@ class RingStore {
           ...ring,
           status: "assigned",
           assignedEntryId: entryId,
+          assignedAt: new Date().toISOString(),
         };
       }
 
@@ -92,6 +107,47 @@ class RingStore {
     });
 
     this.save();
+  }
+
+  releaseFromBreedingEntry(
+    entryId,
+    ringNumber,
+    { reason, releaseDate, notes },
+  ) {
+    const selectedRing = this.rings.find(
+      (ring) => ring.ringNumber === ringNumber,
+    );
+
+    if (!selectedRing || selectedRing.assignedEntryId !== entryId) {
+      throw new Error("This ring is not assigned to the breeding entry.");
+    }
+
+    const historyRecord = {
+      ringNumber,
+      entryId,
+      assignedAt: selectedRing.assignedAt || "",
+      releasedAt: releaseDate,
+      reason,
+      notes,
+    };
+
+    this.rings = this.rings.map((ring) =>
+      ring.ringNumber === ringNumber
+        ? {
+            ...ring,
+            status: "available",
+            assignedEntryId: "",
+            assignedAt: "",
+            assignmentHistory: [
+              ...(ring.assignmentHistory || []),
+              historyRecord,
+            ],
+          }
+        : ring,
+    );
+
+    this.save();
+    return historyRecord;
   }
 
   subscribe(listener) {

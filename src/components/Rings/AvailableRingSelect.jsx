@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ringStore from "../../data/RingStore";
+import RingReleasePanel from "./RingReleasePanel";
 import "./AvailableRingSelect.css";
 
 export default function AvailableRingSelect({ entry, onChange }) {
@@ -10,7 +11,7 @@ export default function AvailableRingSelect({ entry, onChange }) {
 
   const choices = rings.filter(
     (ring) =>
-      ring.status === "available" ||
+      (!entry.ringNumber && ring.status === "available") ||
       ring.assignedEntryId === entry.id,
   );
   const currentIsMissing =
@@ -34,25 +35,36 @@ export default function AvailableRingSelect({ entry, onChange }) {
   }
 
   return (
-    <label className="available-ring-select">
-      Ring Number
-      <select value={entry.ringNumber} onChange={selectRing}>
-        <option value="">Select available ring</option>
-        {currentIsMissing && (
-          <option value={entry.ringNumber}>
-            {entry.ringNumber} (current)
-          </option>
-        )}
-        {choices.map((ring) => (
-          <option key={ring.ringNumber} value={ring.ringNumber}>
-            {ring.ringNumber}
-          </option>
-        ))}
-      </select>
+    <div className="available-ring-select">
+      <label>
+        Ring Number
+        <select
+          value={entry.ringNumber}
+          onChange={selectRing}
+          disabled={Boolean(entry.ringNumber)}
+        >
+          {!entry.ringNumber && (
+            <option value="">Select available ring</option>
+          )}
+          {currentIsMissing && (
+            <option value={entry.ringNumber}>
+              {entry.ringNumber} (current)
+            </option>
+          )}
+          {choices.map((ring) => (
+            <option key={ring.ringNumber} value={ring.ringNumber}>
+              {ring.ringNumber}
+            </option>
+          ))}
+        </select>
+      </label>
       {choices.length === 0 && !entry.ringNumber && (
         <small>Add rings in the Ring Register first.</small>
       )}
       {error && <small className="available-ring-error">{error}</small>}
-    </label>
+      {entry.ringNumber && (
+        <RingReleasePanel entry={entry} onChange={onChange} />
+      )}
+    </div>
   );
 }

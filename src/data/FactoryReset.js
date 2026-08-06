@@ -6,6 +6,7 @@ const STORAGE_KEYS = [
   "loftCommanderBirdStore",
   "loftCommanderLoftStore",
   "loftCommanderCustomerSettings",
+  "loftCommanderRingRegister",
   "loft-commander-boxes",
   "loft-commander-birds",
   "railway-lofts-birds",

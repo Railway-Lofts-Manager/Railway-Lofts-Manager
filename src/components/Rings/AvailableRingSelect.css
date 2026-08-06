@@ -3,6 +3,11 @@
   gap: 6px;
 }
 
+.available-ring-select > label {
+  display: grid;
+  gap: 6px;
+}
+
 .available-ring-select select {
   min-height: 44px;
 }
