@@ -1,3 +1,6 @@
+import BoxBreedingHistory from
+  "./Breeding/BoxBreedingHistory";
+
 function BoxForm({
   loft,
   boxNumber,
@@ -8,12 +11,12 @@ function BoxForm({
   onClose,
 }) {
   const cocks = birds.filter(
-    (bird) => bird.sex === 'Cock',
-  )
+    (bird) => bird.sex === "Cock",
+  );
 
   const hens = birds.filter(
-    (bird) => bird.sex === 'Hen',
-  )
+    (bird) => bird.sex === "Hen",
+  );
 
   return (
     <div
@@ -23,10 +26,7 @@ function BoxForm({
         onClose()
       }
     >
-      <form
-        className="modal"
-        onSubmit={onSave}
-      >
+      <form className="modal" onSubmit={onSave}>
         <header>
           <div>
             <p className="eyebrow">
@@ -50,13 +50,9 @@ function BoxForm({
             Cock
             <select
               name="cock"
-              defaultValue={
-                assignment?.cock || ''
-              }
+              defaultValue={assignment?.cock || ""}
             >
-              <option value="">
-                Select cock
-              </option>
+              <option value="">Select cock</option>
 
               {cocks.map((bird) => (
                 <option
@@ -73,13 +69,9 @@ function BoxForm({
             Hen
             <select
               name="hen"
-              defaultValue={
-                assignment?.hen || ''
-              }
+              defaultValue={assignment?.hen || ""}
             >
-              <option value="">
-                Select hen
-              </option>
+              <option value="">Select hen</option>
 
               {hens.map((bird) => (
                 <option
@@ -98,10 +90,7 @@ function BoxForm({
               name="eggs"
               type="number"
               min="0"
-              max="4"
-              defaultValue={
-                assignment?.eggs || 0
-              }
+              defaultValue={assignment?.eggs || 0}
             />
           </label>
 
@@ -111,13 +100,17 @@ function BoxForm({
               name="youngsters"
               type="number"
               min="0"
-              max="4"
               defaultValue={
                 assignment?.youngsters || 0
               }
             />
           </label>
         </div>
+
+        <BoxBreedingHistory
+          loftId={loft.id}
+          boxNumber={boxNumber}
+        />
 
         <footer>
           {assignment && (
@@ -147,6 +140,7 @@ function BoxForm({
         </footer>
       </form>
     </div>
-  )
+  );
 }
+
 export default BoxForm;

@@ -1,0 +1,67 @@
+.breeding-entry-list {
+  display: grid;
+  gap: 14px;
+}
+
+.breeding-entry-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.breeding-entry-list-header h3 {
+  margin: 0;
+}
+
+.breeding-entry-list-header button {
+  min-height: 46px;
+}
+
+.breeding-entry-summary-list {
+  display: grid;
+  gap: 10px;
+}
+
+.breeding-entry-summary {
+  display: grid;
+  grid-template-columns:
+    100px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 14px;
+  border: 1px solid #dfe7df;
+  border-left: 6px solid #d4af37;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #173923;
+  text-align: left;
+}
+
+.breeding-entry-summary span {
+  color: #718077;
+}
+
+.breeding-entry-empty {
+  padding: 24px;
+  border: 2px dashed #ccd6ce;
+  border-radius: 12px;
+  color: #718077;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .breeding-entry-list-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .breeding-entry-list-header button {
+    width: 100%;
+  }
+
+  .breeding-entry-summary {
+    grid-template-columns: 1fr;
+  }
+}

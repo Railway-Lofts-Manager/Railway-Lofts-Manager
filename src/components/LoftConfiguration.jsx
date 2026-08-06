@@ -1,6 +1,9 @@
 import { useState } from "react";
 import useLofts from "../hooks/useLofts";
 import loftStore from "../data/LoftStore";
+import {
+  updateLinkedLoft,
+} from "../data/LoftLinkService";
 import LoftConfigurationHeader from
   "./LoftConfiguration/LoftConfigurationHeader";
 import LoftConfigurationList from
@@ -17,7 +20,7 @@ export default function LoftConfiguration() {
 
   function saveLoft(loft) {
     if (editingLoft) {
-      loftStore.updateLoft(editingLoft.id, loft);
+      updateLinkedLoft(editingLoft.id, loft);
     } else {
       loftStore.addLoft({
         ...loft,

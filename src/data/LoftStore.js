@@ -1,5 +1,12 @@
 const STORAGE_KEY = "loftCommanderLoftStore";
 
+function normaliseLoft(loft) {
+  return {
+    ...loft,
+    type: loft.type || "breeding",
+  };
+}
+
 class LoftStore {
   constructor() {
     this.listeners = [];
@@ -11,7 +18,9 @@ class LoftStore {
       const saved = localStorage.getItem(STORAGE_KEY);
       const lofts = saved ? JSON.parse(saved) : [];
 
-      return Array.isArray(lofts) ? lofts : [];
+      return Array.isArray(lofts)
+        ? lofts.map(normaliseLoft)
+        : [];
     } catch (error) {
       console.error("Unable to load LoftStore", error);
       return [];
@@ -50,25 +59,23 @@ class LoftStore {
   }
 
   replaceLofts(lofts) {
-    this.lofts = lofts.map((loft) => ({
-      ...loft,
-    }));
-
+    this.lofts = lofts.map(normaliseLoft);
     this.notify();
   }
 
   addLoft(loft) {
-    this.lofts.push({
-      ...loft,
-    });
-
+    this.lofts.push(normaliseLoft(loft));
     this.notify();
   }
 
   updateLoft(loftId, updates) {
     this.lofts = this.lofts.map((loft) =>
       loft.id === loftId
-        ? { ...loft, ...updates, id: loft.id }
+        ? normaliseLoft({
+            ...loft,
+            ...updates,
+            id: loft.id,
+          })
         : loft,
     );
 

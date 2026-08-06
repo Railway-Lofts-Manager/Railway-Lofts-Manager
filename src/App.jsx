@@ -21,6 +21,7 @@ import BirdProfile from "./components/BirdProfile";
 import ImportWizard from "./components/Import/ImportWizard";
 import birdStore from "./data/BirdStore";
 import getInitialPage from "./data/InitialPage";
+import migrateBirdLoftIds from "./data/BirdLoftMigration";
 
 const emptyBird = {
   birdId: '',
@@ -36,8 +37,9 @@ const emptyBird = {
 
   status: 'Racing',
 
-  loft: '',
-  section: '',
+loft: '',
+loftId: '',
+section: '',
   nestBox: '',
 
   fatherId: '',
@@ -99,19 +101,19 @@ function loadLegacyBirds() {
 }
 
 function initialiseBirdStore() {
-  const storedBirds = birdStore.getBirds()
+  const storedBirds = birdStore.getBirds();
 
-  if (storedBirds.length > 0) {
-    return storedBirds
+  if (storedBirds.length === 0) {
+    const legacyBirds = loadLegacyBirds();
+
+    if (legacyBirds.length > 0) {
+      birdStore.importBirds(legacyBirds);
+    }
   }
 
-  const legacyBirds = loadLegacyBirds()
+  migrateBirdLoftIds();
 
-  if (legacyBirds.length > 0) {
-    birdStore.importBirds(legacyBirds)
-  }
-
-  return birdStore.getBirds()
+  return birdStore.getBirds();
 }
 
 function loadBoxes() {
@@ -428,10 +430,11 @@ function exportBirds() {
 
         {activePage === 'Bird Profile' && (
           <BirdProfile
-            bird={selectedBird}
-            onBack={closeBirdProfile}
-            onUpdateBird={updateBird}
-          />
+  bird={selectedBird}
+  onBack={closeBirdProfile}
+  onUpdateBird={updateBird}
+  onEditBird={openEditBird}
+/>
         )}
         
         {activePage === "Import Centre" && (

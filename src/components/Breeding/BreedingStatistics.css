@@ -1,0 +1,48 @@
+.breeding-statistics {
+  display: grid;
+  gap: 16px;
+}
+
+.breeding-statistics-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 0;
+}
+
+.breeding-statistics-header button {
+  min-height: 46px;
+}
+
+.breeding-statistics-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.breeding-statistic-card {
+  min-height: 0;
+  text-align: center;
+}
+
+.breeding-statistic-card strong {
+  display: block;
+  color: #173923;
+  font-size: 2rem;
+}
+
+.breeding-statistic-card span {
+  color: #718077;
+}
+
+@media (max-width: 700px) {
+  .breeding-statistics-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .breeding-statistics-header button {
+    width: 100%;
+  }
+}

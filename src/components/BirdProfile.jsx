@@ -10,6 +10,7 @@ export default function BirdProfile({
   bird,
   onBack,
   onUpdateBird,
+  onEditBird,
 }) {
   const [activeTab, setActiveTab] = useState(null);
   const [photo, setPhoto] = useState(bird?.photo || null);
@@ -258,7 +259,7 @@ const returnToLifeHistory = () => {
 
             <div className="command-location-strip">
               <div>
-                <span>Current Assignment</span>
+                <span>Assigned To</span>
                 <strong>
                   {displayValue(bird.loft)}
                   {bird.section ? ` • ${bird.section}` : ""}
@@ -280,7 +281,7 @@ const returnToLifeHistory = () => {
   <button
     type="button"
     className="command-primary-action"
-    onClick={() => setIsEditing(true)}
+   onClick={() => onEditBird?.(bird)}
   >
     Edit Bird Profile
   </button>

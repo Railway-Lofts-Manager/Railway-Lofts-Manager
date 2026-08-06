@@ -1,0 +1,38 @@
+.current-round {
+  display: grid;
+  gap: 16px;
+}
+
+.current-round-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 0;
+}
+
+.current-round-header button {
+  min-height: 46px;
+}
+
+.current-round-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.current-round-card {
+  min-height: 0;
+  border-left: 8px solid #d4af37;
+}
+
+@media (max-width: 700px) {
+  .current-round-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .current-round-header button {
+    width: 100%;
+  }
+}

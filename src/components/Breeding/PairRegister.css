@@ -1,0 +1,31 @@
+.pair-register {
+  display: grid;
+  gap: 16px;
+}
+
+.pair-register-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 0;
+}
+
+.pair-register-header button {
+  min-height: 46px;
+}
+
+.pair-register-list {
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 700px) {
+  .pair-register-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pair-register-header button {
+    width: 100%;
+  }
+}

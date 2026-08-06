@@ -1,3 +1,5 @@
+import BirdLoftSelector from "./BirdLoftSelector";
+
 function BirdForm({
   form,
   setForm,
@@ -5,13 +7,13 @@ function BirdForm({
   error,
   onSave,
   onClose,
-    lofts,
+  lofts,
 }) {
   const update = (event) =>
     setForm((current) => ({
       ...current,
       [event.target.name]: event.target.value,
-    }))
+    }));
 
   return (
     <div
@@ -21,10 +23,7 @@ function BirdForm({
         onClose()
       }
     >
-      <form
-        className="modal"
-        onSubmit={onSave}
-      >
+      <form className="modal" onSubmit={onSave}>
         <header>
           <div>
             <p className="eyebrow">
@@ -33,8 +32,8 @@ function BirdForm({
 
             <h3>
               {editing
-                ? 'Edit bird'
-                : 'Add a new bird'}
+                ? "Edit bird"
+                : "Add a new bird"}
             </h3>
           </div>
 
@@ -48,9 +47,7 @@ function BirdForm({
         </header>
 
         {error && (
-          <p className="form-error">
-            {error}
-          </p>
+          <p className="form-error">{error}</p>
         )}
 
         <div className="form-grid">
@@ -122,24 +119,11 @@ function BirdForm({
             </select>
           </label>
 
-          <label>
-            Current loft
-            <select
-              name="loft"
-              value={form.loft}
-              onChange={update}
-            >
-              <option value="">
-                Select a loft
-              </option>
-
-              {lofts.map((loft) => (
-                <option key={loft.id}>
-                  {loft.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <BirdLoftSelector
+            form={form}
+            setForm={setForm}
+            lofts={lofts}
+          />
 
           <label className="full">
             Family / bloodline
@@ -175,13 +159,13 @@ function BirdForm({
             type="submit"
           >
             {editing
-              ? 'Save Changes'
-              : 'Add Bird'}
+              ? "Save Changes"
+              : "Add Bird"}
           </button>
         </footer>
       </form>
     </div>
-  )
+  );
 }
 
 export default BirdForm;

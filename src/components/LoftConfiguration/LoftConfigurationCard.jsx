@@ -1,9 +1,15 @@
+import loftTypes from "../../data/LoftTypes";
 import "./LoftConfigurationCard.css";
 
 export default function LoftConfigurationCard({
   loft,
   onEdit,
 }) {
+  const loftType =
+    loftTypes.find(
+      (type) => type.value === loft.type,
+    )?.label || "Other";
+
   return (
     <article
       className="panel loft-configuration-card"
@@ -14,7 +20,7 @@ export default function LoftConfigurationCard({
       <h3>{loft.name}</h3>
 
       <p className="loft-configuration-code">
-        {loft.code}
+        {loft.code} · {loftType}
       </p>
 
       <div className="loft-configuration-details">

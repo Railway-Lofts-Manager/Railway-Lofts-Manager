@@ -1,0 +1,13 @@
+.box-breeding-history {
+  margin: 20px 0;
+  padding-top: 20px;
+  border-top: 1px solid #e1e7e2;
+}
+
+.box-breeding-season-label {
+  margin: 0 0 14px;
+  color: #a67c16;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}

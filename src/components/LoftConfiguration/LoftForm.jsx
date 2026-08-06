@@ -1,11 +1,14 @@
 import { useState } from "react";
+import loftTypes from "../../data/LoftTypes";
+import loftColours from "../../data/LoftColours";
 import "./LoftForm.css";
 
 const emptyLoft = {
   name: "",
   code: "",
-  boxes: 1,
-  colour: "#2f8f5b",
+  type: "breeding",
+  boxes: 0,
+  colour: "#d2a11e",
   status: "in-use",
 };
 
@@ -14,18 +17,37 @@ export default function LoftForm({
   onSave,
   onCancel,
 }) {
-  const [form, setForm] = useState(
-    loft || emptyLoft,
-  );
+  const [form, setForm] = useState({
+    ...emptyLoft,
+    ...loft,
+  });
 
   function updateField(event) {
     const { name, value } = event.target;
 
-    setForm((current) => ({
-      ...current,
-      [name]:
-        name === "boxes" ? Number(value) : value,
-    }));
+    setForm((current) => {
+      if (name === "type") {
+        const selectedType = loftTypes.find(
+          (type) => type.value === value,
+        );
+
+        return {
+          ...current,
+          type: value,
+          colour:
+            selectedType?.defaultColour ||
+            current.colour,
+        };
+      }
+
+      return {
+        ...current,
+        [name]:
+          name === "boxes"
+            ? Number(value)
+            : value,
+      };
+    });
   }
 
   function handleSubmit(event) {
@@ -39,87 +61,130 @@ export default function LoftForm({
   }
 
   return (
-    <form
-      className="panel loft-form"
-      onSubmit={handleSubmit}
+    <div
+      className="modal-backdrop"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onCancel?.();
+        }
+      }}
     >
-      <h3>
-        {loft ? "Edit Loft" : "Add Loft"}
-      </h3>
+      <form
+        className="modal loft-form"
+        onSubmit={handleSubmit}
+      >
+        <header>
+          <h3>{loft ? "Edit Loft" : "Add Loft"}</h3>
 
-      <div className="loft-form-row">
-        <label>
-          Loft Name
-          <input
-            name="name"
-            value={form.name}
-            onChange={updateField}
-            required
-          />
-        </label>
-
-        <label>
-          Short Code
-          <input
-            name="code"
-            value={form.code}
-            onChange={updateField}
-            required
-          />
-        </label>
-      </div>
-
-      <div className="loft-form-row">
-        <label>
-          Nest Boxes
-          <input
-            name="boxes"
-            type="number"
-            min="1"
-            value={form.boxes}
-            onChange={updateField}
-            required
-          />
-        </label>
-
-        <label>
-          Card Colour
-          <input
-            name="colour"
-            type="color"
-            value={form.colour}
-            onChange={updateField}
-          />
-        </label>
-
-        <label>
-          Status
-          <select
-            name="status"
-            value={form.status}
-            onChange={updateField}
+          <button
+            className="close"
+            type="button"
+            onClick={onCancel}
           >
-            <option value="in-use">In Use</option>
-            <option value="not-in-use">
-              Not In Use
-            </option>
-          </select>
-        </label>
-      </div>
+            ×
+          </button>
+        </header>
 
-      <div className="loft-form-actions">
-        <button className="primary" type="submit">
-          Save Loft
-        </button>
+        <div className="loft-form-row">
+          <label>
+            Loft Name
+            <input
+              name="name"
+              value={form.name}
+              onChange={updateField}
+              required
+            />
+          </label>
 
-        <button
-          className="secondary"
-          type="button"
-          onClick={onCancel}
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
+          <label>
+            Short Code
+            <input
+              name="code"
+              value={form.code}
+              onChange={updateField}
+              required
+            />
+          </label>
+        </div>
+
+        <div className="loft-form-row">
+          <label>
+            Loft Type
+            <select
+              name="type"
+              value={form.type}
+              onChange={updateField}
+            >
+              {loftTypes.map((type) => (
+                <option
+                  key={type.value}
+                  value={type.value}
+                >
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Nest Boxes
+            <input
+              name="boxes"
+              type="number"
+              min="0"
+              value={form.boxes}
+              onChange={updateField}
+              required
+            />
+          </label>
+
+          <label>
+            Card Colour
+            <select
+              name="colour"
+              value={form.colour}
+              onChange={updateField}
+            >
+              {loftColours.map((colour) => (
+                <option
+                  key={colour.value}
+                  value={colour.value}
+                >
+                  {colour.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Status
+            <select
+              name="status"
+              value={form.status}
+              onChange={updateField}
+            >
+              <option value="in-use">In Use</option>
+              <option value="not-in-use">
+                Not In Use
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <footer className="loft-form-actions">
+          <button
+            className="secondary"
+            type="button"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+
+          <button className="primary" type="submit">
+            Save Loft
+          </button>
+        </footer>
+      </form>
+    </div>
   );
 }

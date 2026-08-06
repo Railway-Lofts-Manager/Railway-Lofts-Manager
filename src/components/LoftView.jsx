@@ -1,6 +1,10 @@
 import { useState } from "react";
 import LoftDashboard from "./Breeding/LoftDashboard";
 import LoftGrid from "./Breeding/LoftGrid";
+import PairRegister from "./Breeding/PairRegister";
+import CurrentRound from "./Breeding/CurrentRound";
+import BreedingStatistics from
+  "./Breeding/BreedingStatistics";
 
 function LoftView({
   selectedLoft,
@@ -46,14 +50,42 @@ function LoftView({
     );
   }
 
+  if (activeView === "pair-register") {
+    return (
+      <PairRegister
+        loft={selectedLoft}
+        assignments={assignments}
+        onSelectBox={setSelectedBox}
+        onBack={() => setActiveView("dashboard")}
+      />
+    );
+  }
+
+  if (activeView === "current-round") {
+    return (
+      <CurrentRound
+        loft={selectedLoft}
+        assignments={assignments}
+        onSelectBox={setSelectedBox}
+        onBack={() => setActiveView("dashboard")}
+      />
+    );
+  }
+
+  if (activeView === "statistics") {
+    return (
+      <BreedingStatistics
+        loft={selectedLoft}
+        assignments={assignments}
+        onBack={() => setActiveView("dashboard")}
+      />
+    );
+  }
+
   return (
     <LoftDashboard
       loft={loftSummary}
-      onSelectModule={(moduleId) => {
-        if (moduleId === "nest-boxes") {
-          setActiveView("nest-boxes");
-        }
-      }}
+      onSelectModule={setActiveView}
     />
   );
 }
