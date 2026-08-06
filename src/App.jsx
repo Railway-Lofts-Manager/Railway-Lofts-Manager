@@ -19,6 +19,7 @@ import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 import BirdProfile from "./components/BirdProfile";
 import ImportWizard from "./components/Import/ImportWizard";
+import RingRegister from "./components/Rings/RingRegister";
 import birdStore from "./data/BirdStore";
 import getInitialPage from "./data/InitialPage";
 import migrateBirdLoftIds from "./data/BirdLoftMigration";
@@ -469,6 +470,10 @@ function exportBirds() {
             assignments={boxAssignments}
             openLoft={openLoft}
           />
+        )}
+
+        {activePage === 'Ring Register' && (
+          <RingRegister />
         )}
 
         {activePage === 'Loft View' && (

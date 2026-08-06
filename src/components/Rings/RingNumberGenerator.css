@@ -1,0 +1,138 @@
+.ring-number-generator {
+  display: grid;
+  gap: 20px;
+  color: #ffffff;
+  background: #10331f;
+  border: 2px solid #d4af37;
+}
+
+.ring-generator-header h2,
+.ring-generator-header p {
+  margin-bottom: 6px;
+}
+
+.ring-generator-header .muted {
+  color: #d8e4da;
+}
+
+.ring-generator-label {
+  color: #d4af37;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.ring-generator-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr)) auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.ring-generator-form label {
+  display: grid;
+  gap: 7px;
+  font-weight: 700;
+}
+
+.ring-generator-form input,
+.ring-generator-form button {
+  min-height: 48px;
+}
+
+.ring-generator-form input {
+  padding: 10px 12px;
+  color: #183321;
+  background: #ffffff;
+  border: 1px solid #c7d3ca;
+  border-radius: 9px;
+  text-transform: uppercase;
+}
+
+.ring-generator-error {
+  margin: 0;
+  color: #ff9a9a;
+  font-weight: 700;
+}
+
+.ring-generator-preview {
+  padding: 18px;
+  border: 1px solid #d4af37;
+  border-radius: 12px;
+  background: #0b2818;
+}
+
+.ring-generator-preview h3,
+.ring-generator-preview p {
+  margin: 0 0 10px;
+}
+
+.ring-preview-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ring-preview-list span {
+  padding: 6px 9px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.1);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.ring-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.ring-save-button {
+  min-height: 46px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 9px;
+  color: #17351f;
+  background: #d4af37;
+  font-weight: 800;
+}
+
+.ring-save-button:hover:not(:disabled) {
+  background: #e2b646;
+}
+
+.ring-save-button:disabled {
+  color: #17351f;
+  background: #d4af37;
+  cursor: default;
+}
+
+.ring-saved-confirmation {
+  color: #bde8c9;
+  font-weight: 700;
+}
+
+.ring-inline-message,
+.ring-inline-error {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.ring-inline-message {
+  color: #c9f0d3;
+  background: rgba(54, 160, 85, 0.18);
+}
+
+.ring-inline-error {
+  color: #ffd0d0;
+  background: rgba(190, 50, 50, 0.2);
+}
+
+@media (max-width: 850px) {
+  .ring-generator-form {
+    grid-template-columns: 1fr;
+  }
+}

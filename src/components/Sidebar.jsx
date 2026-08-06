@@ -9,6 +9,7 @@ const menuItems = [
   { name: "Loft Configuration", icon: "🏠" },
   { name: "Loft View", icon: "🏘️" },
   { name: "Breeding Centre", icon: "🥚" },
+  { name: "Ring Register", icon: "🔢" },
   { name: "Race Centre", icon: "🏁" },
   { name: "Health Centre", icon: "🏥" },
   { name: "Season Planner", icon: "📅" },
