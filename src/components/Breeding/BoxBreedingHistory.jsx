@@ -12,6 +12,8 @@ import BreedingEntryList from
   "./BreedingEntryList";
 import BreedingEntryModal from
   "./BreedingEntryModal";
+import syncYoungBird from
+  "../../data/YoungBirdSyncService";
 import "./BoxBreedingHistory.css";
 
 function entryHasData(entry) {
@@ -31,6 +33,7 @@ function entryHasData(entry) {
 export default function BoxBreedingHistory({
   loftId,
   boxNumber,
+  assignment,
 }) {
   const seasons = useBreedingSeasons();
   const settings = settingsStore.getSettings();
@@ -62,6 +65,14 @@ export default function BoxBreedingHistory({
   }
 
   function updateEntry(entryId, updates) {
+    const currentEntry = entries.find(
+      (entry) => entry.id === entryId,
+    );
+    const updatedEntry = {
+      ...currentEntry,
+      ...updates,
+    };
+
     updateBreedingEntry(
       settings.season,
       loftId,
@@ -69,6 +80,24 @@ export default function BoxBreedingHistory({
       entryId,
       updates,
     );
+
+    const youngBird = syncYoungBird({
+      entry: updatedEntry,
+      season: settings.season,
+      breedingLoftId: loftId,
+      boxNumber,
+      assignment,
+    });
+
+    if (youngBird && updatedEntry.youngBirdId !== youngBird.birdId) {
+      updateBreedingEntry(
+        settings.season,
+        loftId,
+        boxNumber,
+        entryId,
+        { youngBirdId: youngBird.birdId },
+      );
+    }
   }
 
   function discardBlankEntry() {

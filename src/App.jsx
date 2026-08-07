@@ -173,9 +173,9 @@ const [showImportCentre, setShowImportCentre] = useState(false)
         }
 
         return (
-          updatedBirds.find(
-            (bird) => bird.id === currentSelectedBird.id,
-          ) || null
+        updatedBirds.find(
+  (bird) => bird.birdId === currentSelectedBird.birdId,
+) || null
         )
       })
     })
@@ -236,7 +236,7 @@ const [showImportCentre, setShowImportCentre] = useState(false)
   }
 
   function openEditBird(bird) {
-    setEditingId(bird.id)
+    setEditingId(bird.birdId)
     setForm({ ...bird })
     setError('')
     setFormOpen(true)
@@ -257,7 +257,7 @@ const [showImportCentre, setShowImportCentre] = useState(false)
     const duplicate = birds.some(
       (bird) =>
         String(bird.ringNumber || '').toUpperCase() === ringNumber &&
-        bird.id !== editingId,
+        bird.birdId !== editingId
     )
 
     if (duplicate) {

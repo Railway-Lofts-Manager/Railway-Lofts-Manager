@@ -110,6 +110,7 @@ function BoxForm({
         <BoxBreedingHistory
           loftId={loft.id}
           boxNumber={boxNumber}
+          assignment={assignment}
         />
 
         <footer>
