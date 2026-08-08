@@ -6,6 +6,7 @@ import "./ImportWizard.css";
 import ExcelImportWizard from "./ExcelImportWizard";
 import RestoreBackupWizard from "./RestoreBackupWizard";
 import loftStore from "../../data/LoftStore";
+import HistoricalArchiveWizard from "./HistoricalArchiveWizard";
 
 const COLUMN_ALIASES = {
   ringNumber: [
@@ -403,7 +404,9 @@ const validRows = importedBirds
         hidden
       />
 
-      {activeWizard === "backup" ? (
+      {activeWizard === "historical" ? (
+        <HistoricalArchiveWizard onBack={() => setActiveWizard(null)} />
+      ) : activeWizard === "backup" ? (
         <RestoreBackupWizard onBack={() => setActiveWizard(null)} />
       ) : activeWizard === "excel" ? (
         <>
@@ -513,8 +516,8 @@ const validRows = importedBirds
 
             <button
               type="button"
-              className="import-method-card"
-              disabled
+              className="import-method-card active"
+              onClick={() => setActiveWizard("historical")}
             >
               <div className="import-method-icon">📂</div>
 
@@ -526,7 +529,7 @@ const validRows = importedBirds
               </p>
 
               <span className="import-method-status">
-                Coming Soon
+                Open →
               </span>
             </button>
 
