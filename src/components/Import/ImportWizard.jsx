@@ -5,6 +5,7 @@ import birdStore from "../../data/BirdStore";
 import "./ImportWizard.css";
 import ExcelImportWizard from "./ExcelImportWizard";
 import RestoreBackupWizard from "./RestoreBackupWizard";
+import loftStore from "../../data/LoftStore";
 
 const COLUMN_ALIASES = {
   ringNumber: [
@@ -14,6 +15,8 @@ const COLUMN_ALIASES = {
     "ringnumber",
     "pigeon number",
   ],
+  name: ["name", "bird name", "pigeon name", "call sign"],
+  year: ["year", "ring year", "birth year"],
   colour: ["colour", "color"],
   sex: ["sex", "gender"],
   breed: ["breed", "strain", "family"],
@@ -21,6 +24,14 @@ const COLUMN_ALIASES = {
   stillInLoft: ["still in loft", "in loft", "current"],
   status: ["status", "bird status"],
   notes: ["comments", "comment", "notes", "remarks"],
+  loft: ["loft", "current loft", "assigned to", "location"],
+  section: ["section", "loft section"],
+  nestBox: ["nest box", "nestbox", "box", "box number"],
+  fatherRingNumber: ["sire", "father", "sire ring", "father ring"],
+  motherRingNumber: ["dam", "mother", "dam ring", "mother ring"],
+  hatchDate: ["hatch date", "date hatched", "date of birth", "dob"],
+  originalOwner: ["original owner", "owner", "bred by", "breeder"],
+  archiveSource: ["archive source", "source", "record source"],
 };
 
 function normaliseHeading(value) {
@@ -85,6 +96,11 @@ function createBirdFromRow(row, columnMap) {
     status = importedStatus || "Active";
   }
 
+  const loftName = cleanValue(row[columnMap.loft]);
+  const matchingLoft = loftStore.getLofts().find(
+    (loft) => loft.name.trim().toLowerCase() === loftName.toLowerCase(),
+  );
+
   return {
     id:
       globalThis.crypto?.randomUUID?.() ||
@@ -93,6 +109,8 @@ function createBirdFromRow(row, columnMap) {
         .slice(2)}`,
 
     ringNumber,
+    name: cleanValue(row[columnMap.name]),
+    year: cleanValue(row[columnMap.year]),
     colour: cleanValue(row[columnMap.colour]),
     sex: cleanValue(row[columnMap.sex]),
     breed: cleanValue(row[columnMap.breed]),
@@ -103,15 +121,18 @@ function createBirdFromRow(row, columnMap) {
     status,
     notes: cleanValue(row[columnMap.notes]),
 
-    name: "",
-    family: "",
-    loft: "",
-    section: "",
-    nestBox: "",
+    family: cleanValue(row[columnMap.breed]),
+    loft: matchingLoft?.name || loftName,
+    loftId: matchingLoft?.id || "",
+    section: cleanValue(row[columnMap.section]),
+    nestBox: cleanValue(row[columnMap.nestBox]),
     fatherId: "",
     motherId: "",
-    archiveSource: "",
-    originalOwner: "",
+    fatherRingNumber: normaliseRingNumber(row[columnMap.fatherRingNumber]),
+    motherRingNumber: normaliseRingNumber(row[columnMap.motherRingNumber]),
+    hatchDate: cleanValue(row[columnMap.hatchDate]),
+    archiveSource: cleanValue(row[columnMap.archiveSource]),
+    originalOwner: cleanValue(row[columnMap.originalOwner]),
     archived: false,
     importedFromExcel: true,
     importedAt: new Date().toISOString(),
@@ -187,14 +208,32 @@ export default function ImportWizard({
       const worksheet =
         workbook.Sheets[firstSheetName];
 
-     const rawRows = XLSX.utils.sheet_to_json(
-  worksheet,
-  {
-    defval: "",
-    raw: false,
-    range: 1, // Skip the title row ("2025 YOUNG BIRDS")
-  }
-);
+      const worksheetRows = XLSX.utils.sheet_to_json(worksheet, {
+        header: 1,
+        defval: "",
+        raw: false,
+      });
+
+      const headerRowIndex = worksheetRows.findIndex((row) =>
+        row.some((cell) =>
+          COLUMN_ALIASES.ringNumber.includes(normaliseHeading(cell)),
+        ),
+      );
+
+      if (headerRowIndex === -1) {
+        throw new Error("Loft Commander could not find a Ring Number heading.");
+      }
+
+      const headings = worksheetRows[headerRowIndex].map(cleanValue);
+      const rawRows = worksheetRows
+        .slice(headerRowIndex + 1)
+        .filter((row) => row.some((cell) => cleanValue(cell)))
+        .map((row) =>
+          headings.reduce((record, heading, index) => ({
+            ...record,
+            [heading]: row[index] ?? "",
+          }), {}),
+        );
 
       if (!rawRows.length) {
         throw new Error(
@@ -202,7 +241,6 @@ export default function ImportWizard({
         );
       }
 
-      const headings = Object.keys(rawRows[0]);
       const columnMap = buildColumnMap(headings);
 
       if (!columnMap.ringNumber) {
@@ -318,6 +356,18 @@ const validRows = importedBirds
       const importedCount =
         birdStore.importBirds(selectedBirds);
 
+      selectedBirds.forEach((importedBird) => {
+        const father = birdStore.getBird(importedBird.fatherRingNumber);
+        const mother = birdStore.getBird(importedBird.motherRingNumber);
+
+        if (father || mother) {
+          birdStore.updateBird(importedBird.ringNumber, {
+            fatherId: father?.birdId || "",
+            motherId: mother?.birdId || "",
+          });
+        }
+      });
+
       setMessage(
         `${importedCount} bird${
           importedCount === 1 ? "" : "s"
@@ -347,7 +397,7 @@ const validRows = importedBirds
         ref={excelFileInputRef}
         id="excel-file-input"
         type="file"
-        accept=".xlsx,.xls"
+        accept=".xlsx,.xls,.csv,text/csv"
         onChange={handleFileSelected}
         disabled={isReading || isImporting}
         hidden
@@ -392,7 +442,6 @@ const validRows = importedBirds
                 birds={birds}
                 selectedRows={selectedRows}
                 onToggleRow={handleToggleRow}
-                existingRingNumbers={existingRingNumbers}
               />
 
               <footer className="import-wizard-footer">
@@ -454,7 +503,7 @@ const validRows = importedBirds
               <h3>Excel Workbook</h3>
 
               <p>
-                Import birds from an existing Excel spreadsheet.
+                Import birds from an existing Excel or CSV spreadsheet.
               </p>
 
               <span className="import-method-status">

@@ -67,7 +67,7 @@ export default function BirdRegister({
       <section className="panel table-panel">
         {birds.length ? (
           <div className="table-wrap">
-            <table>
+            <table className="bird-register-table">
               <thead>
                 <tr>
                   <th>Ring Number</th>

@@ -7,7 +7,7 @@ export default function ExcelImportWizard({
   return (
     <LoftWizard
       title="Excel Import Wizard"
-      description="Import birds from an Excel workbook into Loft Commander."
+      description="Import complete bird records from an Excel or CSV file into Loft Commander."
       currentStep={1}
       onBack={onBack}
       steps={[
@@ -21,14 +21,14 @@ export default function ExcelImportWizard({
         <h2>Step 1</h2>
 
         <p>
-          Select your Excel workbook to begin.
+          Select your Excel workbook or CSV file to begin.
         </p>
 
         <button
           className="command-primary-action"
           onClick={onChooseWorkbook}
         >
-          📊 Choose Excel Workbook
+          📊 Choose Excel or CSV File
         </button>
       </div>
     </LoftWizard>

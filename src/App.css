@@ -433,6 +433,7 @@ nav { display: grid; gap: 7px; margin-top: 24px; } nav button { border: 0; borde
 
 .ring-number-link {
   display: inline-block;
+  white-space: nowrap;
   padding: 5px 8px;
   border: 1px solid transparent;
   border-radius: 7px;
@@ -446,6 +447,12 @@ nav { display: grid; gap: 7px; margin-top: 24px; } nav button { border: 0; borde
     background 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease;
+}
+
+.bird-register-table th:first-child,
+.bird-register-table td:first-child {
+  min-width: 165px;
+  white-space: nowrap;
 }
 
 .ring-number-link:hover {

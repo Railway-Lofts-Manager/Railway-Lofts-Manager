@@ -2,14 +2,7 @@ export default function ImportPreview({
   birds,
   selectedRows,
   onToggleRow,
-  existingRingNumbers = [],
 }) {
-  const existingSet = new Set(
-    existingRingNumbers.map((ring) =>
-      String(ring || "").trim().toUpperCase()
-    )
-  );
-
   if (!birds.length) {
     return null;
   }
@@ -33,11 +26,16 @@ export default function ImportPreview({
             <tr>
               <th>Import</th>
               <th>Ring Number</th>
+              <th>Name</th>
+              <th>Year</th>
               <th>Colour</th>
               <th>Sex</th>
               <th>Breed</th>
               <th>Race Team</th>
               <th>Status</th>
+              <th>Loft</th>
+              <th>Sire</th>
+              <th>Dam</th>
               <th>Comments</th>
               <th>Result</th>
             </tr>
@@ -93,11 +91,17 @@ const invalid = result === "invalid";
                     </strong>
                   </td>
 
+                  <td>{bird.name || "—"}</td>
+                  <td>{bird.year || "—"}</td>
+
                   <td>{bird.colour || "—"}</td>
                   <td>{bird.sex || "—"}</td>
                   <td>{bird.breed || "—"}</td>
                   <td>{bird.raceTeam || "—"}</td>
                   <td>{bird.status || "—"}</td>
+                  <td>{bird.loft || "—"}</td>
+                  <td>{bird.fatherRingNumber || "—"}</td>
+                  <td>{bird.motherRingNumber || "—"}</td>
                   <td>{bird.notes || "—"}</td>
 
                   <td>
