@@ -40,6 +40,7 @@ export default function RestoreBackupWizard({ onBack }) {
           <div><span>Rings</span><strong>{summary.rings}</strong></div>
           <div><span>Lofts</span><strong>{summary.lofts}</strong></div>
           <div><span>Breeding seasons</span><strong>{summary.seasons}</strong></div>
+          <div><span>Documents</span><strong>{summary.documents}</strong></div>
           <label>Type <strong>RESTORE BACKUP</strong> to continue
             <input value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
           </label>

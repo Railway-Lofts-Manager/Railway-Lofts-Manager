@@ -7,7 +7,7 @@ export const BACKUP_KEYS = [
   "loft-commander-boxes",
 ];
 
-export function createBackup() {
+export async function createBackup() {
   const data = {};
   BACKUP_KEYS.forEach((key) => {
     const saved = localStorage.getItem(key);
@@ -19,11 +19,12 @@ export function createBackup() {
     version: 1,
     createdAt: new Date().toISOString(),
     data,
+    documents: await getAllDocuments(),
   };
 }
 
-export function downloadBackup() {
-  const backup = createBackup();
+export async function downloadBackup() {
+  const backup = await createBackup();
   const date = backup.createdAt.slice(0, 10);
   const blob = new Blob([JSON.stringify(backup, null, 2)], {
     type: "application/json",
@@ -64,15 +65,21 @@ export function backupSummary(backup) {
     rings: Array.isArray(data.loftCommanderRingRegister) ? data.loftCommanderRingRegister.length : 0,
     lofts: Array.isArray(data.loftCommanderLoftStore) ? data.loftCommanderLoftStore.length : 0,
     seasons: Array.isArray(data.loftCommanderBreedingSeasons) ? data.loftCommanderBreedingSeasons.length : 0,
+    documents: Array.isArray(backup.documents) ? backup.documents.length : 0,
   };
 }
 
-export function restoreBackup(backup) {
+export async function restoreBackup(backup) {
   const validBackup = validateBackup(backup);
   BACKUP_KEYS.forEach((key) => {
     const value = validBackup.data[key];
     if (value === null || value === undefined) localStorage.removeItem(key);
     else localStorage.setItem(key, JSON.stringify(value));
   });
+  await restoreDocuments(validBackup.documents || []);
   window.location.reload();
 }
+import {
+  getAllDocuments,
+  restoreDocuments,
+} from "./DocumentStore";

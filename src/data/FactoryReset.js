@@ -3,6 +3,7 @@ import loftStore from "./LoftStore";
 import settingsStore from "./SettingsStore";
 import ringStore from "./RingStore";
 import breedingSeasonStore from "./BreedingSeasonStore";
+import { clearDocuments } from "./DocumentStore";
 
 const RESET_COMPLETE_KEY = "loftCommanderFactoryResetComplete";
 
@@ -52,7 +53,7 @@ export function consumeFactoryResetResult() {
   }
 }
 
-export default function factoryReset() {
+export default async function factoryReset() {
   const removed = getFactoryResetPreview();
 
   birdStore.clear();
@@ -60,6 +61,7 @@ export default function factoryReset() {
   ringStore.clear();
   breedingSeasonStore.clear();
   settingsStore.reset();
+  await clearDocuments();
 
   STORAGE_KEYS.forEach((key) => {
     localStorage.removeItem(key);

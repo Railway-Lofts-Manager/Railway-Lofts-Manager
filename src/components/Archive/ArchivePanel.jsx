@@ -8,6 +8,11 @@ import ArchiveDocumentList from "./ArchiveDocumentList";
 import ArchiveViewer from "./ArchiveViewer";
 
 import { openArchiveFilePicker } from "./ArchiveUploader";
+import {
+  deleteDocument,
+  getDocument,
+  saveDocument,
+} from "../../data/DocumentStore";
 
 export default function ArchivePanel({
   bird,
@@ -18,17 +23,21 @@ export default function ArchivePanel({
   const documents = bird?.documents || [];
 
   function handleUpload(type) {
-    openArchiveFilePicker(type, (document) => {
+    openArchiveFilePicker(type, async (document) => {
+      await saveDocument(document);
+      const metadata = { ...document };
+      delete metadata.data;
       const updatedBird = {
         ...bird,
-        documents: [...documents, document],
+        documents: [...documents, metadata],
       };
 
       onUpdateBird(updatedBird);
     });
   }
 
-  function handleDelete(documentId) {
+  async function handleDelete(documentId) {
+    await deleteDocument(documentId);
     const updatedBird = {
       ...bird,
       documents: documents.filter(
@@ -43,8 +52,9 @@ export default function ArchivePanel({
     }
   }
 
-  function handleOpen(document) {
-    setSelectedDocument(document);
+  async function handleOpen(document) {
+    const storedDocument = await getDocument(document.id);
+    setSelectedDocument(storedDocument || document);
   }
 
   return (
