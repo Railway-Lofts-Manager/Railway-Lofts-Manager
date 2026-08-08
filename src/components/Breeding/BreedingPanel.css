@@ -43,6 +43,26 @@
   cursor: pointer;
 }
 
+.breeding-season-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+}
+
+.breeding-archive-button {
+  padding: 12px 16px;
+  border: 1px solid rgba(212, 175, 55, 0.7);
+  border-radius: 10px;
+  color: #f6e6a5;
+  background: rgba(212, 175, 55, 0.08);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.breeding-archive-button:hover {
+  background: rgba(212, 175, 55, 0.16);
+}
+
 .breeding-season-button:hover {
   background: #ead16f;
 }
@@ -102,6 +122,11 @@
 @media (max-width: 720px) {
   .breeding-header-content {
     align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .breeding-season-actions {
+    width: 100%;
     flex-direction: column;
   }
 }

@@ -360,7 +360,10 @@ const [showImportCentre, setShowImportCentre] = useState(false)
   }
 
   function rolloverBreedingSeason(nextYear) {
-    const nextSeason = breedingSeasonStore.rolloverSeason(nextYear)
+    const nextSeason = breedingSeasonStore.rolloverSeason(
+      nextYear,
+      boxAssignments,
+    )
 
     settingsStore.updateSettings({ season: nextSeason.year })
     setBoxAssignments({})

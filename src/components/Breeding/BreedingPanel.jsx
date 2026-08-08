@@ -4,6 +4,7 @@ import LoftCard from "./LoftCard";
 import settingsStore from "../../data/SettingsStore";
 import useBreedingSeasons from "../../hooks/useBreedingSeasons";
 import BreedingSeasonRollover from "./BreedingSeasonRollover";
+import BreedingSeasonArchive from "./BreedingSeasonArchive";
 
 export default function BreedingPanel({
   lofts = [],
@@ -13,6 +14,7 @@ export default function BreedingPanel({
 }) {
   const seasons = useBreedingSeasons();
   const [rolloverOpen, setRolloverOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
   const activeSeason =
     seasons.find((season) => season.status === "active") || null;
   const currentSeason =
@@ -39,13 +41,23 @@ export default function BreedingPanel({
             </p>
           </div>
 
-          <button
-            type="button"
-            className="breeding-season-button"
-            onClick={() => setRolloverOpen(true)}
-          >
-            Close Season / Start Next
-          </button>
+          <div className="breeding-season-actions">
+            <button
+              type="button"
+              className="breeding-archive-button"
+              onClick={() => setArchiveOpen(true)}
+            >
+              View Season Archive
+            </button>
+
+            <button
+              type="button"
+              className="breeding-season-button"
+              onClick={() => setRolloverOpen(true)}
+            >
+              Close Season / Start Next
+            </button>
+          </div>
         </div>
       </header>
 
@@ -72,6 +84,13 @@ export default function BreedingPanel({
           onSeasonRollover?.(nextYear);
           setRolloverOpen(false);
         }}
+      />
+
+      <BreedingSeasonArchive
+        open={archiveOpen}
+        seasons={seasons}
+        lofts={lofts}
+        onClose={() => setArchiveOpen(false)}
       />
     </section>
   );

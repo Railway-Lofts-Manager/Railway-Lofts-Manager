@@ -62,7 +62,7 @@ class BreedingSeasonStore {
     this.notify();
   }
 
-  rolloverSeason(nextYear) {
+  rolloverSeason(nextYear, assignments = {}) {
     const year = Number(nextYear);
     const activeSeason = this.seasons.find(
       (season) => season.status === "active",
@@ -76,12 +76,32 @@ class BreedingSeasonStore {
       throw new Error("The new season must be later than the current season.");
     }
 
+    const archivedLoftRecords = copy(activeSeason.loftRecords || {});
+
+    Object.entries(assignments).forEach(([boxId, assignment]) => {
+      const boxNumber = Number(String(boxId).split("-").pop());
+      const loftId = String(boxId).slice(0, -(String(boxNumber).length + 1));
+      const currentRecord = archivedLoftRecords[boxId] || {
+        id: boxId,
+        loftId,
+        boxNumber,
+        pairings: [],
+        entries: [],
+      };
+
+      archivedLoftRecords[boxId] = {
+        ...currentRecord,
+        assignment: copy(assignment),
+      };
+    });
+
     this.seasons = this.seasons.map((season) =>
       season.id === activeSeason.id
         ? {
             ...season,
             status: "archived",
             closedAt: new Date().toISOString(),
+            loftRecords: archivedLoftRecords,
           }
         : season,
     );
