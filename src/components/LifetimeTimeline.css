@@ -1,0 +1,117 @@
+.timeline-event-count {
+  padding: 8px 12px;
+  border: 1px solid #d7bd62;
+  border-radius: 999px;
+  color: #725b18;
+  background: #fff9e7;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.timeline-list {
+  display: grid;
+}
+
+.timeline-event {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+}
+
+.timeline-rail {
+  display: grid;
+  grid-template-rows: 44px minmax(18px, 1fr);
+  justify-items: center;
+}
+
+.timeline-rail span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 2px solid #d4af37;
+  border-radius: 50%;
+  color: #f4df93;
+  background: #123321;
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.timeline-rail i {
+  width: 2px;
+  height: 100%;
+  background: #d9e0da;
+}
+
+.timeline-event-card {
+  margin: 0 0 16px 8px;
+  padding: 17px 19px;
+  border: 1px solid #dce2dd;
+  border-left: 4px solid #2b6840;
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 7px 19px rgba(19, 39, 25, 0.05);
+}
+
+.timeline-birth .timeline-event-card {
+  border-left-color: #d4af37;
+}
+
+.timeline-breeding .timeline-event-card {
+  border-left-color: #9a6b35;
+}
+
+.timeline-identity .timeline-event-card {
+  border-left-color: #426c9b;
+}
+
+.timeline-event-card small {
+  color: #8a958d;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.timeline-event-card h4 {
+  margin: 5px 0 6px;
+  color: #1d3224;
+  font-size: 1.05rem;
+}
+
+.timeline-event-card p {
+  margin: 0;
+  color: #68766d;
+}
+
+.timeline-empty {
+  padding: 48px 24px;
+  border: 1px dashed #cbd4cd;
+  border-radius: 15px;
+  text-align: center;
+  background: #f8faf8;
+}
+
+.timeline-empty > span {
+  color: #a58525;
+  font-size: 2.2rem;
+}
+
+.timeline-empty h4 {
+  margin: 10px 0 6px;
+  color: #1d3224;
+}
+
+.timeline-empty p {
+  margin: 0;
+  color: #718077;
+}
+
+@media (max-width: 620px) {
+  .timeline-event {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .timeline-rail span {
+    width: 36px;
+    height: 36px;
+  }
+}

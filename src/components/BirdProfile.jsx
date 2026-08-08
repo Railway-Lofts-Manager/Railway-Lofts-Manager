@@ -3,8 +3,8 @@ import "../pages/BirdProfile.css";
 import CommandRibbon from "./CommandRibbon";
 import LifeHistoryTiles from "./LifeHistoryTiles";
 import ArchivePanel from "./Archive/ArchivePanel";
-import MovementHistory from "./MovementHistory";
 import BreedingProfileRecord from "./BreedingProfileRecord";
+import LifetimeTimeline from "./LifetimeTimeline";
 
 
 
@@ -585,7 +585,7 @@ const returnToLifeHistory = () => {
         )}
 
         {activeTab === "timeline" && (
-          <MovementHistory bird={bird} />
+          <LifetimeTimeline bird={bird} />
         )}
 
         {activeTab === "archive" && (
