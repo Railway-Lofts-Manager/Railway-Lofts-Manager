@@ -5,6 +5,29 @@
 
 const STORAGE_KEY = "loftCommanderBirdStore";
 
+function createMovementId() {
+  return (
+    globalThis.crypto?.randomUUID?.() ||
+    `move-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  );
+}
+
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function sameLoft(currentBird, updates) {
+  const currentId = String(currentBird.loftId || "");
+  const nextId = String(updates.loftId || "");
+
+  if (currentId && nextId) {
+    return currentId === nextId;
+  }
+
+  return String(currentBird.loft || "").trim().toLowerCase() ===
+    String(updates.loft || "").trim().toLowerCase();
+}
+
 class BirdStore {
   constructor() {
     this.listeners = [];
@@ -180,13 +203,34 @@ class BirdStore {
       return false;
     }
 
+    const initialHistory = Array.isArray(bird.loftHistory)
+      ? bird.loftHistory
+      : [];
+
     const newBird = {
       ...bird,
       ringNumber: normalisedRing,
       birdId: bird.birdId || this.generateBirdId(),
       createdAt:
         bird.createdAt || new Date().toISOString(),
+      loftHistory:
+        initialHistory.length > 0 || !bird.loft
+          ? initialHistory
+          : [
+              {
+                id: createMovementId(),
+                date: bird.loftMoveDate || today(),
+                fromLoftId: "",
+                fromLoftName: "",
+                loftId: bird.loftId || "",
+                loftName: bird.loft,
+                reason: "Initial loft assignment",
+              },
+            ],
     };
+
+    delete newBird.loftMoveDate;
+    delete newBird.loftMoveReason;
 
     this.birds.push(newBird);
     this.notify();
@@ -212,14 +256,52 @@ class BirdStore {
         return bird;
       }
 
-      return {
+      const loftWasIncluded =
+        Object.prototype.hasOwnProperty.call(updates, "loftId") ||
+        Object.prototype.hasOwnProperty.call(updates, "loft");
+
+      const destinationExists = Boolean(
+        updates.loftId || updates.loft,
+      );
+
+      const hasMoved =
+        loftWasIncluded &&
+        destinationExists &&
+        !sameLoft(bird, updates);
+
+      const existingHistory = Array.isArray(bird.loftHistory)
+        ? bird.loftHistory
+        : [];
+
+      const nextBird = {
         ...bird,
         ...updates,
 
         // Never replace the permanent internal ID accidentally.
         birdId: bird.birdId || updates.birdId,
+        loftHistory: hasMoved
+          ? [
+              ...existingHistory,
+              {
+                id: createMovementId(),
+                date: updates.loftMoveDate || today(),
+                fromLoftId: bird.loftId || "",
+                fromLoftName: bird.loft || "",
+                loftId: updates.loftId || "",
+                loftName: updates.loft || "",
+                reason:
+                  updates.loftMoveReason ||
+                  "Loft assignment updated",
+              },
+            ]
+          : existingHistory,
         updatedAt: new Date().toISOString(),
       };
+
+      delete nextBird.loftMoveDate;
+      delete nextBird.loftMoveReason;
+
+      return nextBird;
     });
 
     this.notify();

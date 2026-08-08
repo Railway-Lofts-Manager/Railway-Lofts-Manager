@@ -3,6 +3,7 @@ import "../pages/BirdProfile.css";
 import CommandRibbon from "./CommandRibbon";
 import LifeHistoryTiles from "./LifeHistoryTiles";
 import ArchivePanel from "./Archive/ArchivePanel";
+import MovementHistory from "./MovementHistory";
 
 
 
@@ -584,13 +585,7 @@ const returnToLifeHistory = () => {
         )}
 
         {activeTab === "timeline" && (
-          <ProfilePlaceholder
-            icon="◷"
-            title="Lifetime Timeline"
-            label="Complete life story"
-            message="There are no timeline events recorded yet."
-            detail="Breeding, health, training, racing and loft movement events will appear here in date order."
-          />
+          <MovementHistory bird={bird} />
         )}
 
         {activeTab === "archive" && (

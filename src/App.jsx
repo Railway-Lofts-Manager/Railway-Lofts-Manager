@@ -281,7 +281,7 @@ const [showImportCentre, setShowImportCentre] = useState(false)
 
     if (editingId) {
       const existingBird = birds.find(
-        (bird) => bird.id === editingId,
+        (bird) => bird.birdId === editingId,
       )
 
       if (!existingBird) {
@@ -364,7 +364,9 @@ const [showImportCentre, setShowImportCentre] = useState(false)
 
   function updateBird(updatedBird) {
     const existingBird = birds.find(
-      (bird) => bird.id === updatedBird.id,
+      (bird) =>
+        bird.birdId === updatedBird.birdId ||
+        (updatedBird.id && bird.id === updatedBird.id),
     )
 
     if (!existingBird) {

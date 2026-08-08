@@ -58,9 +58,15 @@ export default function syncYoungBird({
   };
 
   const moveRecord = {
+    id:
+      globalThis.crypto?.randomUUID?.() ||
+      `move-${Date.now()}-${Math.random().toString(36).slice(2)}`,
     date: entry.movedToYoungBirdLoftDate,
+    fromLoftId: breedingLoftId,
+    fromLoftName: breedingLoft?.name || "",
     loftId: entry.destinationLoftId,
     loftName: destinationLoft?.name || "",
+    reason: "Moved from nest box to young bird loft",
   };
 
   const existingMoves = existingBird?.loftHistory || [];

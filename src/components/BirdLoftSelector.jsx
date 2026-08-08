@@ -21,6 +21,7 @@ export default function BirdLoftSelector({
       ...current,
       loftId,
       loft: loft?.name || "",
+      section: loft?.name || "",
     }));
   }
 

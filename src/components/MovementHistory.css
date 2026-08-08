@@ -1,0 +1,135 @@
+.movement-count {
+  padding: 8px 12px;
+  border: 1px solid #d7bd62;
+  border-radius: 999px;
+  color: #725b18;
+  background: #fff9e7;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.movement-list {
+  display: grid;
+  gap: 14px;
+}
+
+.movement-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid #dce2dd;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 7px 19px rgba(19, 39, 25, 0.05);
+}
+
+.movement-marker {
+  display: grid;
+  place-items: center;
+  color: #d4af37;
+  background: linear-gradient(180deg, #173a24, #0c2114);
+}
+
+.movement-marker span {
+  font-size: 1rem;
+}
+
+.movement-details {
+  padding: 18px 20px;
+}
+
+.movement-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.movement-heading small {
+  display: block;
+  margin-bottom: 4px;
+  color: #8b958e;
+  font-weight: 800;
+}
+
+.movement-heading h4 {
+  margin: 0;
+  color: #17301f;
+  font-size: 1.12rem;
+}
+
+.movement-heading strong {
+  padding: 6px 9px;
+  border-radius: 7px;
+  color: #fff;
+  background: #1c5331;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+}
+
+.movement-details dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.movement-details dl > div {
+  padding: 11px 12px;
+  border-radius: 9px;
+  background: #f4f7f4;
+}
+
+.movement-details dt {
+  margin-bottom: 5px;
+  color: #849087;
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.movement-details dd {
+  margin: 0;
+  color: #26382b;
+  font-weight: 800;
+}
+
+.movement-empty {
+  padding: 48px 24px;
+  border: 1px dashed #cbd4cd;
+  border-radius: 15px;
+  text-align: center;
+  background: #f8faf8;
+}
+
+.movement-empty span {
+  color: #a58525;
+  font-size: 2.2rem;
+}
+
+.movement-empty h4 {
+  margin: 12px 0 7px;
+  color: #1d3224;
+}
+
+.movement-empty p {
+  margin: 0;
+  color: #718077;
+}
+
+@media (max-width: 720px) {
+  .movement-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+
+  .movement-details dl {
+    grid-template-columns: 1fr;
+  }
+
+  .movement-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
