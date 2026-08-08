@@ -4,6 +4,7 @@ import ImportPreview from "./ImportPreview";
 import birdStore from "../../data/BirdStore";
 import "./ImportWizard.css";
 import ExcelImportWizard from "./ExcelImportWizard";
+import RestoreBackupWizard from "./RestoreBackupWizard";
 
 const COLUMN_ALIASES = {
   ringNumber: [
@@ -122,7 +123,6 @@ export default function ImportWizard({
   onImportComplete,
   onCancel,
 }) {
-  const [fileName, setFileName] = useState("");
   const [birds, setBirds] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [message, setMessage] = useState("");
@@ -175,7 +175,6 @@ export default function ImportWizard({
     setMessage("");
     setBirds([]);
     setSelectedRows([]);
-    setFileName(file.name);
 
     try {
       const data = await file.arrayBuffer();
@@ -354,7 +353,9 @@ const validRows = importedBirds
         hidden
       />
 
-      {activeWizard === "excel" ? (
+      {activeWizard === "backup" ? (
+        <RestoreBackupWizard onBack={() => setActiveWizard(null)} />
+      ) : activeWizard === "excel" ? (
         <>
           <ExcelImportWizard
             onBack={() => setActiveWizard(null)}
@@ -482,8 +483,8 @@ const validRows = importedBirds
 
             <button
               type="button"
-              className="import-method-card"
-              disabled
+              className="import-method-card active"
+              onClick={() => setActiveWizard("backup")}
             >
               <div className="import-method-icon">☁</div>
 
@@ -494,7 +495,7 @@ const validRows = importedBirds
               </p>
 
               <span className="import-method-status">
-                Coming Soon
+                Open →
               </span>
             </button>
 

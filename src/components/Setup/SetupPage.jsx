@@ -4,6 +4,7 @@ import SetupNavigation from "./SetupNavigation";
 import SetupCompletion from "./SetupCompletion";
 import SetupModeControl from "./SetupModeControl";
 import FactoryResetPanel from "./FactoryResetPanel";
+import BackupPanel from "./BackupPanel";
 import "./SetupPage.css";
 
 export default function SetupPage({
@@ -36,6 +37,8 @@ export default function SetupPage({
       />
 
       <SetupCompletion onComplete={onComplete} />
+
+      <BackupPanel />
 
       <FactoryResetPanel />
     </div>
