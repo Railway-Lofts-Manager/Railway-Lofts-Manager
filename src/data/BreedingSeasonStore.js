@@ -62,6 +62,48 @@ class BreedingSeasonStore {
     this.notify();
   }
 
+  rolloverSeason(nextYear) {
+    const year = Number(nextYear);
+    const activeSeason = this.seasons.find(
+      (season) => season.status === "active",
+    );
+
+    if (!activeSeason) {
+      throw new Error("There is no active breeding season to close.");
+    }
+
+    if (!Number.isInteger(year) || year <= Number(activeSeason.year)) {
+      throw new Error("The new season must be later than the current season.");
+    }
+
+    this.seasons = this.seasons.map((season) =>
+      season.id === activeSeason.id
+        ? {
+            ...season,
+            status: "archived",
+            closedAt: new Date().toISOString(),
+          }
+        : season,
+    );
+
+    let nextSeason = this.seasons.find(
+      (season) => Number(season.year) === year,
+    );
+
+    if (nextSeason) {
+      nextSeason = { ...nextSeason, status: "active", closedAt: null };
+      this.seasons = this.seasons.map((season) =>
+        season.id === nextSeason.id ? nextSeason : season,
+      );
+    } else {
+      nextSeason = createBreedingSeason(year);
+      this.seasons.push(nextSeason);
+    }
+
+    this.notify();
+    return copy(nextSeason);
+  }
+
   subscribe(listener) {
     this.listeners.push(listener);
 

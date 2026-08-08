@@ -23,6 +23,8 @@ import RingRegister from "./components/Rings/RingRegister";
 import birdStore from "./data/BirdStore";
 import getInitialPage from "./data/InitialPage";
 import migrateBirdLoftIds from "./data/BirdLoftMigration";
+import breedingSeasonStore from "./data/BreedingSeasonStore";
+import settingsStore from "./data/SettingsStore";
 
 const emptyBird = {
   birdId: '',
@@ -357,6 +359,16 @@ const [showImportCentre, setShowImportCentre] = useState(false)
     setSelectedBox(null)
   }
 
+  function rolloverBreedingSeason(nextYear) {
+    const nextSeason = breedingSeasonStore.rolloverSeason(nextYear)
+
+    settingsStore.updateSettings({ season: nextSeason.year })
+    setBoxAssignments({})
+    setSelectedBox(null)
+
+    return nextSeason
+  }
+
   function openBirdProfile(bird) {
     setSelectedBird(bird)
     setActivePage('Bird Profile')
@@ -471,6 +483,7 @@ function exportBirds() {
             lofts={lofts}
             assignments={boxAssignments}
             openLoft={openLoft}
+            onSeasonRollover={rolloverBreedingSeason}
           />
         )}
 

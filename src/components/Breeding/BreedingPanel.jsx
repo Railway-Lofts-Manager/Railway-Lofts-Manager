@@ -1,11 +1,23 @@
+import { useState } from "react";
 import "./BreedingPanel.css";
 import LoftCard from "./LoftCard";
+import settingsStore from "../../data/SettingsStore";
+import useBreedingSeasons from "../../hooks/useBreedingSeasons";
+import BreedingSeasonRollover from "./BreedingSeasonRollover";
 
 export default function BreedingPanel({
   lofts = [],
   assignments = {},
   onSelectLoft,
+  onSeasonRollover,
 }) {
+  const seasons = useBreedingSeasons();
+  const [rolloverOpen, setRolloverOpen] = useState(false);
+  const activeSeason =
+    seasons.find((season) => season.status === "active") || null;
+  const currentSeason =
+    activeSeason?.year || settingsStore.getSettings().season;
+
   const getOccupiedBoxes = (loftId) =>
     Object.keys(assignments).filter((key) =>
       key.startsWith(`${loftId}-`),
@@ -14,15 +26,27 @@ export default function BreedingPanel({
   return (
     <section className="breeding-panel">
       <header className="breeding-header">
-        <p className="breeding-label">
-          BREEDING CENTRE
-        </p>
+        <div className="breeding-header-content">
+          <div>
+            <p className="breeding-label">
+              BREEDING CENTRE • SEASON {currentSeason}
+            </p>
 
-        <h2>Breeding Locations</h2>
+            <h2>Breeding Locations</h2>
 
-        <p className="breeding-intro">
-          Select a loft to open its nest box planner.
-        </p>
+            <p className="breeding-intro">
+              Select a loft to open its nest box planner.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="breeding-season-button"
+            onClick={() => setRolloverOpen(true)}
+          >
+            Close Season / Start Next
+          </button>
+        </div>
       </header>
 
       <div className="breeding-loft-grid">
@@ -38,6 +62,17 @@ export default function BreedingPanel({
           />
         ))}
       </div>
+
+      <BreedingSeasonRollover
+        open={rolloverOpen}
+        currentSeason={Number(currentSeason)}
+        seasons={seasons}
+        onClose={() => setRolloverOpen(false)}
+        onConfirm={(nextYear) => {
+          onSeasonRollover?.(nextYear);
+          setRolloverOpen(false);
+        }}
+      />
     </section>
   );
 }

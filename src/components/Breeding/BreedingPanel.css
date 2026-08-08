@@ -25,6 +25,28 @@
   font-size: 2rem;
 }
 
+.breeding-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.breeding-season-button {
+  flex: 0 0 auto;
+  padding: 12px 16px;
+  border: 1px solid #d4af37;
+  border-radius: 10px;
+  color: #102d1d;
+  background: #d4af37;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.breeding-season-button:hover {
+  background: #ead16f;
+}
+
 .breeding-intro {
   margin: 0;
   color: #d8e4da;
@@ -75,4 +97,11 @@
   margin: 0;
   color: #d4af37;
   font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .breeding-header-content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }

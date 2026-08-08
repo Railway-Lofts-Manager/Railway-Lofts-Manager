@@ -1,0 +1,142 @@
+.season-rollover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(3, 14, 8, 0.78);
+}
+
+.season-rollover-modal {
+  width: min(680px, 100%);
+  max-height: calc(100vh - 44px);
+  overflow-y: auto;
+  border: 2px solid #d4af37;
+  border-radius: 18px;
+  color: #203126;
+  background: #f7f9f7;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+}
+
+.season-rollover-modal > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px;
+  color: #fff;
+  background: linear-gradient(135deg, #173a24, #0c2114);
+}
+
+.season-rollover-modal header p {
+  margin: 0 0 5px;
+  color: #d4af37;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.season-rollover-modal header h3 {
+  margin: 0;
+}
+
+.season-rollover-modal header button {
+  border: 0;
+  color: #fff;
+  background: transparent;
+  font-size: 1.7rem;
+  cursor: pointer;
+}
+
+.season-rollover-warning {
+  margin: 22px 24px 0;
+  padding: 16px;
+  border: 1px solid #d6bd69;
+  border-radius: 11px;
+  background: #fff8df;
+}
+
+.season-rollover-warning p {
+  margin: 7px 0 0;
+  color: #665b39;
+  line-height: 1.5;
+}
+
+.season-confirmation-field {
+  display: grid;
+  gap: 8px;
+  padding: 20px 24px 0;
+  font-weight: 800;
+}
+
+.season-confirmation-field input {
+  padding: 12px;
+  border: 1px solid #b9c4bb;
+  border-radius: 9px;
+  font: inherit;
+}
+
+.season-rollover-error {
+  margin: 10px 24px 0;
+  color: #a3312b;
+  font-weight: 800;
+}
+
+.archived-season-list {
+  margin: 20px 24px 0;
+  overflow: hidden;
+  border: 1px solid #dce2dd;
+  border-radius: 11px;
+  background: #fff;
+}
+
+.archived-season-list h4 {
+  margin: 0;
+  padding: 13px 15px;
+  border-bottom: 1px solid #e3e8e4;
+}
+
+.archived-season-list > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  padding: 12px 15px;
+  border-bottom: 1px solid #edf0ed;
+}
+
+.season-rollover-modal > footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 22px 24px;
+}
+
+.season-rollover-modal footer button {
+  padding: 11px 15px;
+  border-radius: 9px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.season-cancel {
+  border: 1px solid #b9c4bb;
+  color: #314338;
+  background: #fff;
+}
+
+.season-confirm {
+  border: 1px solid #d4af37;
+  color: #fff;
+  background: #173a24;
+}
+
+@media (max-width: 600px) {
+  .season-rollover-modal > footer {
+    flex-direction: column-reverse;
+  }
+
+  .archived-season-list > div {
+    grid-template-columns: 1fr;
+  }
+}
