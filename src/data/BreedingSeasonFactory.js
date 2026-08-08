@@ -40,5 +40,7 @@ export function createBreedingEntry() {
     movedToYoungBirdLoftDate: "",
     destinationLoftId: "",
     youngBirdId: "",
+    cockRingNumber: "",
+    henRingNumber: "",
   };
 }

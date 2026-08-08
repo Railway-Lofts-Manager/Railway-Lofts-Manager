@@ -68,9 +68,19 @@ export default function BoxBreedingHistory({
     const currentEntry = entries.find(
       (entry) => entry.id === entryId,
     );
+    const parentage = {
+      cockRingNumber: assignment?.cock || currentEntry?.cockRingNumber || "",
+      henRingNumber: assignment?.hen || currentEntry?.henRingNumber || "",
+    };
+
+    const updatesWithParentage = {
+      ...updates,
+      ...parentage,
+    };
+
     const updatedEntry = {
       ...currentEntry,
-      ...updates,
+      ...updatesWithParentage,
     };
 
     updateBreedingEntry(
@@ -78,7 +88,7 @@ export default function BoxBreedingHistory({
       loftId,
       boxNumber,
       entryId,
-      updates,
+      updatesWithParentage,
     );
 
     const youngBird = syncYoungBird({

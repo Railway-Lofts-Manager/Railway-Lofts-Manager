@@ -4,6 +4,7 @@ import CommandRibbon from "./CommandRibbon";
 import LifeHistoryTiles from "./LifeHistoryTiles";
 import ArchivePanel from "./Archive/ArchivePanel";
 import MovementHistory from "./MovementHistory";
+import BreedingProfileRecord from "./BreedingProfileRecord";
 
 
 
@@ -506,14 +507,7 @@ const returnToLifeHistory = () => {
         )}
 
         {activeTab === "breeding" && (
-          <ProfilePlaceholder
-            icon="◇"
-            title="Breeding Record"
-            label="Breeding command"
-            message="No breeding records have been connected to this bird yet."
-            detail="Mates, eggs, fertility, hatch results, foster records and every youngster bred will appear here."
-            buttonText="+ Add Breeding Record"
-          />
+          <BreedingProfileRecord bird={bird} />
         )}
 
         {activeTab === "training" && (

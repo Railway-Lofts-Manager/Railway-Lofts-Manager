@@ -1,0 +1,171 @@
+.breeding-record-count {
+  padding: 8px 12px;
+  border: 1px solid #d7bd62;
+  border-radius: 999px;
+  color: #725b18;
+  background: #fff9e7;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.breeding-origin-panel,
+.breeding-record-card,
+.breeding-profile-summary article {
+  border: 1px solid #dce2dd;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 7px 19px rgba(19, 39, 25, 0.05);
+}
+
+.breeding-origin-panel {
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.breeding-profile-subheading,
+.breeding-record-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.breeding-profile-subheading {
+  padding: 16px 18px;
+  color: #fff;
+  background: linear-gradient(135deg, #173a24, #0c2114);
+}
+
+.breeding-profile-subheading small,
+.breeding-record-card header small {
+  color: #d7bc5c;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+.breeding-profile-subheading h4,
+.breeding-record-card h4 {
+  margin: 4px 0 0;
+}
+
+.breeding-origin-grid,
+.breeding-record-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+
+.breeding-origin-grid > div,
+.breeding-record-card dl > div {
+  padding: 14px 16px;
+  border-right: 1px solid #e6eae7;
+  border-bottom: 1px solid #e6eae7;
+}
+
+.breeding-origin-grid dt,
+.breeding-record-card dt {
+  margin-bottom: 5px;
+  color: #829087;
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.breeding-origin-grid dd,
+.breeding-record-card dd {
+  margin: 0;
+  color: #26382b;
+  font-weight: 800;
+}
+
+.breeding-profile-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.breeding-profile-summary article {
+  padding: 18px;
+}
+
+.breeding-profile-summary span {
+  display: block;
+  color: #7c8980;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.breeding-profile-summary strong {
+  display: block;
+  margin-top: 7px;
+  color: #173a24;
+  font-size: 1.8rem;
+}
+
+.breeding-record-list {
+  display: grid;
+  gap: 14px;
+}
+
+.breeding-record-card {
+  overflow: hidden;
+}
+
+.breeding-record-card header {
+  padding: 16px 18px;
+  border-bottom: 1px solid #e2e7e3;
+}
+
+.breeding-record-card header > strong {
+  padding: 6px 9px;
+  border-radius: 7px;
+  color: #fff;
+  background: #1c5331;
+  font-size: 0.7rem;
+}
+
+.breeding-record-card > p {
+  margin: 0;
+  padding: 14px 18px;
+  color: #657269;
+  background: #f7f9f7;
+}
+
+.breeding-record-empty {
+  padding: 45px 22px;
+  border: 1px dashed #cbd4cd;
+  border-radius: 15px;
+  text-align: center;
+  background: #f8faf8;
+}
+
+.breeding-record-empty span {
+  color: #a58525;
+  font-size: 2.2rem;
+}
+
+.breeding-record-empty h4 {
+  margin: 10px 0 6px;
+  color: #1d3224;
+}
+
+.breeding-record-empty p {
+  margin: 0;
+  color: #718077;
+}
+
+@media (max-width: 720px) {
+  .breeding-origin-grid,
+  .breeding-record-card dl,
+  .breeding-profile-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .breeding-record-card header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
