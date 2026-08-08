@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function BirdRegister({
   birds,
   counts,
@@ -77,6 +75,7 @@ export default function BirdRegister({
                   <th>Breed</th>
                   <th>Sex</th>
                   <th>Colour</th>
+                  <th>Age</th>
                   <th>Status</th>
                   <th>Loft</th>
                   <th>Nest Box</th>
@@ -100,6 +99,7 @@ export default function BirdRegister({
                     <td>{bird.breed || "—"}</td>
                     <td>{bird.sex || "—"}</td>
                     <td>{bird.colour || "—"}</td>
+                    <td>{bird.ageCategory || "Age Unknown"}</td>
 
                     <td>
                       <span

@@ -6,7 +6,7 @@ export default function Dashboard({ birds = [] }) {
   ).length;
 
   const youngBirds = birds.filter(
-    b => b.status?.toLowerCase() === "young bird"
+    b => b.ageCategory === "Young Bird"
   ).length;
 
   const stockBirds = birds.filter(

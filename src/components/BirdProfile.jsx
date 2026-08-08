@@ -130,6 +130,7 @@ const returnToLifeHistory = () => {
     ["Ring Number", bird.ringNumber],
     ["Name", bird.name],
     ["Year", bird.year],
+    ["Age Classification", bird.ageCategory],
     ["Breed", bird.breed],
     ["Sex", bird.sex],
     ["Colour", bird.colour],
@@ -255,6 +256,11 @@ const returnToLifeHistory = () => {
               <div>
                 <span>Year</span>
                 <strong>{ringYear}</strong>
+              </div>
+
+              <div>
+                <span>Age</span>
+                <strong>{displayValue(bird.ageCategory, "Age Unknown")}</strong>
               </div>
             </div>
 

@@ -3,6 +3,8 @@
 // Central Bird Database
 // =====================================================
 
+import { withCalculatedAge } from "./BirdAgeService";
+
 const STORAGE_KEY = "loftCommanderBirdStore";
 
 function createMovementId() {
@@ -163,7 +165,7 @@ class BirdStore {
   // -------------------------
 
   getBirds() {
-    return [...this.birds];
+    return this.birds.map((bird) => withCalculatedAge(bird));
   }
 
   getBird(ringNumber) {
@@ -171,12 +173,14 @@ class BirdStore {
       .trim()
       .toUpperCase();
 
-    return this.birds.find(
+    const bird = this.birds.find(
       (bird) =>
         String(bird.ringNumber || "")
           .trim()
           .toUpperCase() === normalisedRing
     );
+
+    return bird ? withCalculatedAge(bird) : undefined;
   }
 
   // -------------------------
@@ -231,6 +235,9 @@ class BirdStore {
 
     delete newBird.loftMoveDate;
     delete newBird.loftMoveReason;
+    delete newBird.ageInYears;
+    delete newBird.ageCategory;
+    delete newBird.ringYear;
 
     this.birds.push(newBird);
     this.notify();
@@ -300,6 +307,9 @@ class BirdStore {
 
       delete nextBird.loftMoveDate;
       delete nextBird.loftMoveReason;
+      delete nextBird.ageInYears;
+      delete nextBird.ageCategory;
+      delete nextBird.ringYear;
 
       return nextBird;
     });

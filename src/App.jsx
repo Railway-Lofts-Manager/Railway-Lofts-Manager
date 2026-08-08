@@ -216,7 +216,7 @@ const [showImportCentre, setShowImportCentre] = useState(false)
       (bird) => bird.status === 'Racing',
     ).length,
     young: birds.filter(
-      (bird) => bird.status === 'Young Bird',
+      (bird) => bird.ageCategory === 'Young Bird',
     ).length,
     stock: birds.filter(
       (bird) => bird.status === 'Stock',
