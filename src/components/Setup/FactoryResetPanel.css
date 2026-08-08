@@ -78,3 +78,44 @@
     width: 100%;
   }
 }
+
+.factory-reset-success {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #72a880;
+  border-radius: 10px;
+  color: #1f5c31;
+  background: #e9f7ec;
+}
+
+.factory-reset-success p {
+  margin: 5px 0 0;
+}
+
+.factory-reset-preview {
+  overflow: hidden;
+  margin: 18px 0;
+  border: 1px solid #d6ddd7;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.factory-reset-preview h4 {
+  margin: 0;
+  padding: 13px 15px;
+  border-bottom: 1px solid #e1e6e2;
+  color: #273a2d;
+}
+
+.factory-reset-preview > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 15px;
+  border-bottom: 1px solid #edf0ed;
+}
+
+.factory-reset-preview strong {
+  color: #8f2f29;
+}
