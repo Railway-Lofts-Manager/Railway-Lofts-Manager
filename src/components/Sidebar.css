@@ -46,3 +46,5 @@ nav.sidebar-setup-navigation {
     padding-top: 0;
   }
 }
+.sidebar-navigation-label { display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; width: calc(100% - 32px); }
+.sidebar-alert-count { display: grid; place-items: center; min-width: 23px; height: 23px; padding: 0 6px; border-radius: 999px; background: #b64336; color: white; font-size: 11px; }

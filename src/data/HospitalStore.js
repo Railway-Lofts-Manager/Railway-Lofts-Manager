@@ -5,7 +5,7 @@ export const HOSPITAL_AREAS = [
   { id: "stock-bird-hospital", name: "Stock Bird Store Shed Hospital/Quarantine", boxes: 4 },
 ];
 
-const emptyState = { admissions: [], strays: [] };
+const emptyState = { admissions: [], strays: [], treatments: [] };
 
 function repairActiveBoxAssignments(state) {
   const occupied = new Set();
@@ -70,6 +70,14 @@ function normaliseRing(value) {
   return String(value || "").trim().toUpperCase();
 }
 
+function normalisePhone(value) {
+  return String(value || "").replace(/\D/g, "");
+}
+
+function normaliseName(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
 function loadState() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -77,6 +85,7 @@ function loadState() {
     const repairedState = {
       admissions: Array.isArray(state.admissions) ? state.admissions : [],
       strays: Array.isArray(state.strays) ? state.strays : [],
+      treatments: Array.isArray(state.treatments) ? state.treatments : [],
     };
 
     if (repairActiveBoxAssignments(repairedState)) {
@@ -107,6 +116,72 @@ const hospitalStore = {
     return loadState();
   },
 
+  findStrayMatches(details) {
+    const ringNumber = normaliseRing(details.ringNumber);
+    const telephone = normalisePhone(details.telephone);
+    const ownerName = normaliseName(details.ownerName);
+
+    return loadState().strays
+      .map((stray) => {
+        const reasons = [];
+        if (ringNumber && normaliseRing(stray.ringNumber) === ringNumber) reasons.push("Ring number");
+        if (telephone && normalisePhone(stray.telephone || stray.ownerDetails) === telephone) reasons.push("Telephone number");
+        if (ownerName && normaliseName(stray.ownerName) === ownerName) reasons.push("Owner name");
+        return reasons.length ? { stray, reasons } : null;
+      })
+      .filter(Boolean);
+  },
+
+  addTreatment(admission, details) {
+    const state = loadState();
+    const treatment = {
+      id: createId("treatment"),
+      admissionId: admission.id,
+      subjectId: admission.birdId || admission.strayId,
+      birdId: admission.birdId || "",
+      strayId: admission.strayId || admission.formerStrayId || "",
+      ringNumber: admission.ringNumber,
+      date: details.date,
+      category: details.category,
+      administrationMethod: details.administrationMethod || "",
+      doseAmount: details.doseAmount || "",
+      doseUnit: details.doseUnit || "",
+      mixedWithAmount: details.mixedWithAmount || "",
+      mixedWithUnit: details.mixedWithUnit || "",
+      medication: details.medication || "",
+      dose:
+        details.dose ||
+        [details.doseAmount, details.doseUnit].filter(Boolean).join(" "),
+      observation: details.observation || "",
+      followUpDate: details.followUpDate || "",
+      createdAt: new Date().toISOString(),
+    };
+
+    state.treatments.push(treatment);
+    saveState(state);
+    return treatment;
+  },
+
+  getTreatmentsForBird(bird) {
+    const state = loadState();
+    return state.treatments.filter(
+      (record) =>
+        record.birdId === bird?.birdId ||
+        record.strayId === bird?.formerStrayId ||
+        normaliseRing(record.ringNumber) === normaliseRing(bird?.ringNumber),
+    );
+  },
+
+  getMedicationList() {
+    const names = loadState().treatments
+      .map((record) => String(record.medication || "").trim())
+      .filter(Boolean);
+
+    return Array.from(new Set(names.map((name) => name.toLowerCase())))
+      .map((normalisedName) => names.find((name) => name.toLowerCase() === normalisedName))
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+  },
+
   admitOwnedBird(details) {
     const state = loadState();
     const admission = {
@@ -134,10 +209,14 @@ const hospitalStore = {
   admitStray(details) {
     const state = loadState();
     const ringNumber = normaliseRing(details.ringNumber);
-    let stray = state.strays.find((record) => record.ringNumber === ringNumber);
+    let stray = details.matchedStrayId
+      ? state.strays.find((record) => record.strayId === details.matchedStrayId)
+      : state.strays.find((record) => record.ringNumber === ringNumber);
 
     const activeAdmission = state.admissions.find(
-      (record) => record.ringNumber === ringNumber && record.status === "Active",
+      (record) =>
+        record.status === "Active" &&
+        (record.ringNumber === ringNumber || (stray && record.strayId === stray.strayId)),
     );
 
     if (activeAdmission) {
@@ -155,12 +234,17 @@ const hospitalStore = {
         ringNumber,
         createdAt: new Date().toISOString(),
         ownerDetails: details.ownerDetails || "",
+        ownerName: details.ownerName || "",
+        telephone: details.telephone || "",
         visits: [],
         status: "Stray",
       };
       state.strays.push(stray);
-    } else if (details.ownerDetails) {
-      stray.ownerDetails = details.ownerDetails;
+    } else {
+      if (details.ownerDetails) stray.ownerDetails = details.ownerDetails;
+      if (details.ownerName) stray.ownerName = details.ownerName;
+      if (details.telephone) stray.telephone = details.telephone;
+      if (ringNumber) stray.ringNumber = ringNumber;
     }
 
     const admission = {
@@ -304,6 +388,10 @@ const hospitalStore = {
         admission.birdId = birdId;
         admission.formerStrayId = strayId;
       }
+    });
+
+    state.treatments.forEach((treatment) => {
+      if (treatment.strayId === strayId) treatment.birdId = birdId;
     });
 
     saveState(state);

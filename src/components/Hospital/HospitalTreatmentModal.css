@@ -1,0 +1,4 @@
+.hospital-treatment-backdrop { z-index: 35; }
+.hospital-treatment-modal { width: min(680px,100%); }
+.hospital-treatment-modal header p { margin: 0 0 3px; color: #a27d1f; font-size: 12px; font-weight: 900; text-transform: uppercase; }
+.hospital-treatment-modal header h3 { margin: 0; }

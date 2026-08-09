@@ -524,7 +524,7 @@ function exportBirds() {
 )}
 
         {activePage === 'Loft Configuration' && (
-          <LoftConfiguration />
+          <LoftConfiguration onOpenHealthcare={() => setActivePage('Health & Strays')} />
         )}
 
 {activePage === 'Setup' && (
@@ -569,7 +569,7 @@ function exportBirds() {
           <RaceCentre />
         )}
 
-        {activePage === 'Hospital' && (
+        {activePage === 'Health & Strays' && (
           <HealthCentre />
         )}
 

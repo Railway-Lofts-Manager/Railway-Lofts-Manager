@@ -1,0 +1,13 @@
+.stray-profile-backdrop { z-index: 32; }
+.stray-profile-modal { width: min(820px,100%); }
+.stray-profile-modal header p { margin: 0 0 3px; color: #a27d1f; font-size: 12px; font-weight: 900; text-transform: uppercase; }
+.stray-profile-modal header h3 { margin: 0 0 3px; }
+.stray-profile-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 20px 0; }
+.stray-profile-summary span { display: grid; gap: 5px; padding: 12px; border-radius: 9px; background: #edf3ee; color: #607066; font-size: 12px; }
+.stray-profile-summary strong { color: #17351f; font-size: 15px; }
+.stray-profile-modal h4 { margin: 18px 0 9px; }
+.stray-profile-list { display: grid; gap: 9px; }
+.stray-profile-list article { display: grid; gap: 4px; padding: 12px; border: 1px solid #dfe7e1; border-radius: 9px; }
+.stray-profile-list article span { color: #617268; }
+.stray-profile-list article p { margin: 0; }
+@media (max-width: 650px) { .stray-profile-summary { grid-template-columns: 1fr; } }

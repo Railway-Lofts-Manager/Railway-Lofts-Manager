@@ -5,6 +5,7 @@ import LifeHistoryTiles from "./LifeHistoryTiles";
 import ArchivePanel from "./Archive/ArchivePanel";
 import BreedingProfileRecord from "./BreedingProfileRecord";
 import LifetimeTimeline from "./LifetimeTimeline";
+import BirdHealthRecord from "./Hospital/BirdHealthRecord";
 
 
 
@@ -522,14 +523,7 @@ const returnToLifeHistory = () => {
         )}
 
         {activeTab === "health" && (
-          <ProfilePlaceholder
-            icon="✚"
-            title="Hospital Record"
-            label="Health command"
-            message="No health records have been connected to this bird yet."
-            detail="Vaccinations, treatments, illnesses, quarantine periods and recovery notes will appear here."
-            buttonText="+ Add Health Record"
-          />
+          <BirdHealthRecord bird={bird} />
         )}
 
         {activeTab === "photos" && (

@@ -1,0 +1,8 @@
+.bird-health-record { display: grid; gap: 16px; }
+.bird-health-record h4 { margin: 10px 0 0; color: #17351f; }
+.health-history-link { padding: 12px 15px; border-left: 4px solid #d4af37; border-radius: 8px; background: #fff7d8; }
+.health-record-list { display: grid; gap: 10px; }
+.health-record-list article { display: grid; gap: 5px; padding: 15px; border: 1px solid #dfe7e1; border-radius: 11px; background: #f8faf8; }
+.health-record-list article span,.health-record-list article small { color: #52685a; }
+.health-record-list article p { margin: 2px 0 0; }
+.health-empty { color: #718077; }

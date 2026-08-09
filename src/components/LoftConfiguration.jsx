@@ -10,8 +10,9 @@ import LoftConfigurationList from
   "./LoftConfiguration/LoftConfigurationList";
 import LoftForm from
   "./LoftConfiguration/LoftForm";
+import HospitalConfigurationCard from "./LoftConfiguration/HospitalConfigurationCard";
 
-export default function LoftConfiguration() {
+export default function LoftConfiguration({ onOpenHealthcare }) {
   const lofts = useLofts();
   const [editingLoft, setEditingLoft] =
     useState(null);
@@ -37,6 +38,8 @@ export default function LoftConfiguration() {
   return (
     <>
       <LoftConfigurationHeader />
+
+      <HospitalConfigurationCard onOpenHealthcare={onOpenHealthcare} />
 
       {formOpen && (
         <LoftForm

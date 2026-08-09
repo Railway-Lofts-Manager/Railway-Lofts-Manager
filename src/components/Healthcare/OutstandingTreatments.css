@@ -1,0 +1,5 @@
+.outstanding-treatments { display: grid; gap: 16px; }
+.outstanding-treatments .healthcare-section-heading { display: flex; align-items: center; justify-content: space-between; }
+.outstanding-count { display: grid; place-items: center; min-width: 42px; height: 42px; border-radius: 50%; background: #b74638; color: white; font-weight: 900; }
+.outstanding-empty { padding: 34px; text-align: center; }.outstanding-empty h4 { margin: 0 0 6px; }.outstanding-empty p { margin: 0; color: #718077; }
+.catch-up-button,.exempt-button { border: 0; border-radius: 7px; padding: 7px 9px; font-size: 12px; font-weight: 800; }.catch-up-button { background: #d4af37; color: #17351f; }.exempt-button { background: #e9eeea; color: #415347; }

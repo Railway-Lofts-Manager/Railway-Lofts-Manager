@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import settingsStore from "../data/SettingsStore";
+import healthcareStore from "../data/HealthcareStore";
 import "./Sidebar.css";
 
 const menuItems = [
@@ -11,7 +12,7 @@ const menuItems = [
   { name: "Breeding Centre", icon: "🥚" },
   { name: "Ring Register", icon: "🔢" },
   { name: "Race Centre", icon: "🏁" },
-  { name: "Hospital", icon: "🏥" },
+  { name: "Health & Strays", icon: "❤️" },
   { name: "Season Planner", icon: "📅" },
   { name: "Reports & Analytics", icon: "📈" },
   { name: "Archive Centre", icon: "🗄️" },
@@ -30,6 +31,10 @@ export default function Sidebar({
   }, []);
 
   function navigationButton(item) {
+    const alertCount = item.name === "Health & Strays"
+      ? healthcareStore.getOutstanding().length
+      : 0;
+
     return (
       <button
         key={item.name}
@@ -41,7 +46,7 @@ export default function Sidebar({
         <span style={{ marginRight: 10 }}>
           {item.icon}
         </span>
-        {item.name}
+        <span className="sidebar-navigation-label">{item.name}{alertCount > 0 && <b className="sidebar-alert-count">{alertCount}</b>}</span>
       </button>
     );
   }

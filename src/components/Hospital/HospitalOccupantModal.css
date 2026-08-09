@@ -1,0 +1,16 @@
+.hospital-occupant-backdrop { z-index: 31; }
+.hospital-occupant-modal { width: min(760px,100%); }
+.hospital-occupant-modal header p { margin: 0 0 3px; color: #a27d1f; font-size: 12px; font-weight: 900; text-transform: uppercase; }
+.hospital-occupant-modal header h3 { margin: 0 0 3px; }
+.hospital-occupant-summary { display: grid; grid-template-columns: repeat(4,1fr); gap: 9px; margin: 20px 0; }
+.hospital-occupant-summary span { display: grid; gap: 5px; padding: 11px; border-radius: 9px; background: #edf3ee; color: #637269; font-size: 12px; }
+.hospital-occupant-summary strong { color: #17351f; font-size: 14px; }
+.hospital-occupant-details { padding: 13px 15px; border-left: 4px solid #d4af37; border-radius: 8px; background: #fff9e7; }
+.hospital-occupant-details p { margin: 5px 0; }
+.hospital-occupant-modal h4 { margin: 18px 0 9px; }
+.hospital-occupant-treatments { display: grid; gap: 8px; }
+.hospital-occupant-treatments article { display: grid; gap: 4px; padding: 12px; border: 1px solid #dfe7e1; border-radius: 9px; }
+.hospital-occupant-treatments article span { color: #617268; }
+.hospital-occupant-treatments article p { margin: 0; }
+.hospital-occupant-empty { color: #718077; }
+@media (max-width: 700px) { .hospital-occupant-summary { grid-template-columns: repeat(2,1fr); } }

@@ -1,0 +1,5 @@
+.hospital-configuration-card { display: grid; grid-template-columns: 1.2fr 2fr auto; gap: 18px; align-items: center; margin: 20px 0; padding: 20px; border: 1px solid #e4c66e; border-left: 5px solid #b84a3a; border-radius: 14px; background: #fffdf6; }
+.hospital-configuration-card p { margin: 0; color: #a57e1b; font-size: 12px; font-weight: 900; text-transform: uppercase; }.hospital-configuration-card h3 { margin: 4px 0; }.hospital-configuration-card > div > span { color: #65756b; }
+.hospital-configuration-areas { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; }.hospital-configuration-areas article { display: grid; gap: 4px; padding: 10px; border-radius: 8px; background: #f3f6f3; }.hospital-configuration-areas span { color: #65756b; font-size: 12px; }
+.hospital-configuration-card button { border: 0; border-radius: 8px; padding: 10px 14px; background: #173f28; color: white; font-weight: 800; }
+@media (max-width: 900px) { .hospital-configuration-card { grid-template-columns: 1fr; }.hospital-configuration-areas { grid-template-columns: 1fr; } }

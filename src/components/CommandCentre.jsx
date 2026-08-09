@@ -1,4 +1,6 @@
 import React from "react";
+import healthcareStore from "../data/HealthcareStore";
+import hospitalStore from "../data/HospitalStore";
 
 export default function CommandCentre({
   counts,
@@ -17,11 +19,15 @@ export default function CommandCentre({
     0
   );
 
+  const healthcareAlerts =
+    healthcareStore.getOutstanding().length +
+    hospitalStore.getState().admissions.filter((record) => record.status === "Active").length;
+
   const cards = [
     ["Birds in Loft", counts.total, "B"],
     ["Eggs", eggs, "E"],
     ["Youngsters", youngsters, "Y"],
-    ["Health Alerts", 1, "H"],
+    ["Health Alerts", healthcareAlerts, "H"],
   ];
 
   return (
