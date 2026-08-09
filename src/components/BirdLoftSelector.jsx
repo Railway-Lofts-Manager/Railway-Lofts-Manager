@@ -22,6 +22,14 @@ export default function BirdLoftSelector({
       loftId,
       loft: loft?.name || "",
       section: loft?.name || "",
+      status:
+        current.status === "Hospital" && loft?.type === "race"
+          ? "Racing"
+          : current.status === "Hospital" && loft?.type === "young-bird"
+            ? "Young Bird"
+            : current.status === "Hospital" && loft?.type === "breeding"
+              ? "Stock"
+              : current.status,
     }));
   }
 

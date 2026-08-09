@@ -1,0 +1,4 @@
+.hospital-outcome-backdrop { z-index: 30; }
+.hospital-outcome-modal { width: min(560px,100%); }
+.hospital-outcome-modal header p { margin: 0 0 3px; color: #a27d1f; font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.hospital-outcome-modal header h3 { margin: 0; }

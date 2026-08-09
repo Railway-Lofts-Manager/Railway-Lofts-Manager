@@ -26,6 +26,7 @@ import migrateBirdLoftIds from "./data/BirdLoftMigration";
 import breedingSeasonStore from "./data/BreedingSeasonStore";
 import settingsStore from "./data/SettingsStore";
 import { exportBirdRegister } from "./data/BirdExportService";
+import hospitalStore from "./data/HospitalStore";
 
 const emptyBird = {
   birdId: '',
@@ -189,6 +190,49 @@ const [showImportCentre, setShowImportCentre] = useState(false)
   }, [])
 
   useEffect(() => {
+    const activeHospitalBirdIds = new Set(
+      hospitalStore
+        .getState()
+        .admissions
+        .filter((admission) => admission.status === "Active")
+        .map((admission) => admission.birdId)
+        .filter(Boolean),
+    );
+
+    let repaired = false;
+
+    birdStore.getBirds().forEach((bird) => {
+      if (bird.status !== "Hospital" || activeHospitalBirdIds.has(bird.birdId)) {
+        return;
+      }
+
+      const assignedLoft = lofts.find(
+        (loft) => loft.id === bird.loftId || loft.name === bird.loft,
+      );
+
+      const repairedStatus =
+        assignedLoft?.type === "young-bird"
+          ? "Young Bird"
+          : assignedLoft?.type === "breeding"
+            ? "Stock"
+            : "Racing";
+
+      const hasRealLoft =
+        bird.loft && bird.loft !== "Hospital / Quarantine";
+
+      birdStore.updateBird(bird.ringNumber, {
+        status: repairedStatus,
+        loftId: hasRealLoft ? bird.loftId || "" : "",
+        loft: hasRealLoft ? bird.loft : "",
+        section: hasRealLoft ? bird.section || bird.loft : "",
+      });
+      repaired = true;
+    });
+
+    if (repaired) setBirds(birdStore.getBirds());
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem(
       'loft-commander-boxes',
       JSON.stringify(boxAssignments),
@@ -296,6 +340,18 @@ const [showImportCentre, setShowImportCentre] = useState(false)
         existingBird.ringNumber,
         savedBird,
       )
+
+      const movedOutOfHospital =
+        existingBird.loft === "Hospital / Quarantine" &&
+        savedBird.loft &&
+        savedBird.loft !== "Hospital / Quarantine";
+
+      if (movedOutOfHospital) {
+        hospitalStore.completeActiveAdmissionForBird(
+          existingBird.birdId,
+          savedBird.loft,
+        );
+      }
     } else {
       const added = birdStore.addBird(savedBird)
 
@@ -513,7 +569,7 @@ function exportBirds() {
           <RaceCentre />
         )}
 
-        {activePage === 'Health Centre' && (
+        {activePage === 'Hospital' && (
           <HealthCentre />
         )}
 

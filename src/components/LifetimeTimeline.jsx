@@ -1,4 +1,5 @@
 import useBreedingSeasons from "../hooks/useBreedingSeasons";
+import hospitalStore, { HOSPITAL_AREAS } from "../data/HospitalStore";
 import "./LifetimeTimeline.css";
 
 function normaliseRing(value) {
@@ -102,6 +103,56 @@ function movementEvents(bird) {
   }));
 }
 
+function strayHistoryEvents(bird) {
+  const hospital = hospitalStore.getState();
+  const stray = hospital.strays.find(
+    (record) =>
+      record.strayId === bird?.formerStrayId ||
+      record.transferredBirdId === bird?.birdId,
+  );
+
+  if (!stray) return [];
+
+  const events = [];
+
+  (stray.visits || []).forEach((visit, index) => {
+    const area = HOSPITAL_AREAS.find((record) => record.id === visit.areaId);
+
+    events.push({
+      id: `stray-arrival-${stray.strayId}-${visit.admissionId || index}`,
+      date: visit.arrivalDate,
+      type: "health",
+      icon: "🏥",
+      title: index === 0 ? "First recorded stray visit" : `Returning stray visit ${index + 1}`,
+      description: `${stray.strayId} • ${area?.name || "Hospital/Quarantine"}, Box ${visit.boxNumber || "not recorded"}${visit.condition ? ` • ${visit.condition}` : ""}`,
+    });
+
+    if (visit.outcome) {
+      events.push({
+        id: `stray-outcome-${stray.strayId}-${visit.admissionId || index}`,
+        date: visit.departureDate || visit.arrivalDate,
+        type: "health",
+        icon: "✓",
+        title: "Stray visit outcome",
+        description: `${visit.outcome}${visit.notes ? ` • ${visit.notes}` : ""}`,
+      });
+    }
+  });
+
+  if (stray.transferredBirdId === bird?.birdId || bird?.formerStrayId === stray.strayId) {
+    events.push({
+      id: `stray-transfer-${stray.strayId}`,
+      date: stray.transferredAt || bird?.createdAt,
+      type: "identity",
+      icon: "LC",
+      title: "Transferred into loft ownership",
+      description: `${stray.strayId} became permanent Loft Commander bird ${bird?.birdId || stray.transferredBirdId}. All previous stray visits remain linked.`,
+    });
+  }
+
+  return events;
+}
+
 export default function LifetimeTimeline({ bird }) {
   const seasons = useBreedingSeasons();
   const linkedBreedingEvents = breedingEvents(seasons, bird);
@@ -112,6 +163,7 @@ export default function LifetimeTimeline({ bird }) {
   const events = [
     ...linkedBreedingEvents,
     ...movementEvents(bird),
+    ...strayHistoryEvents(bird),
   ];
 
   if (bird?.createdAt) {

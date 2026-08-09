@@ -6,6 +6,7 @@ export const BACKUP_KEYS = [
   "loftCommanderBreedingSeasons",
   "loftCommanderRaceProgramme",
   "loftCommanderRacePoints",
+  "loftCommanderHospital",
   "loft-commander-boxes",
 ];
 
