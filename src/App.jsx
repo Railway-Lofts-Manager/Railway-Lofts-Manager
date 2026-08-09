@@ -25,6 +25,7 @@ import getInitialPage from "./data/InitialPage";
 import migrateBirdLoftIds from "./data/BirdLoftMigration";
 import breedingSeasonStore from "./data/BreedingSeasonStore";
 import settingsStore from "./data/SettingsStore";
+import { exportBirdRegister } from "./data/BirdExportService";
 
 const emptyBird = {
   birdId: '',
@@ -409,7 +410,7 @@ function closeImportWizard() {
 }
 
 function exportBirds() {
-  alert("Export Birds will be built next.");
+  exportBirdRegister(birds);
 }
   return (
     <div className="app-shell">
