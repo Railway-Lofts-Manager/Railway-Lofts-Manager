@@ -1,19 +1,4 @@
-.loft-configuration-header {
-  margin-bottom: 16px;
-}
-
-.loft-configuration-label {
-  margin: 0 0 6px;
-  color: #a67c16;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-}
-
-.loft-configuration-header h2 {
-  margin: 0 0 8px;
-}
-
-.loft-configuration-header p:last-child {
-  margin-bottom: 0;
-}
+.loft-configuration-header { margin-bottom:16px; padding:22px 24px; border:1px solid #28553b; border-radius:16px; background:linear-gradient(135deg,#123f29,#1f5d3d); color:white; box-shadow:0 10px 24px #123f2920; }
+.loft-configuration-label { margin:0 0 5px; color:#e0b638; font-size:.75rem; font-weight:900; letter-spacing:.1em; text-transform:uppercase; }
+.loft-configuration-header h2 { margin:0 0 7px; color:white; font-size:29px; }
+.loft-configuration-header p:last-child { margin:0; color:#d4e2d7; }

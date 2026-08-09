@@ -17,6 +17,7 @@ const STORAGE_KEYS = [
   "loftCommanderRacePoints",
   "loftCommanderHospital",
   "loftCommanderHealthcare",
+  "loftCommanderSeasonPlanner",
   "loft-commander-boxes",
   "loft-commander-birds",
   "railway-lofts-birds",

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import RaceForm from "./RaceForm";
 import raceStore from "../data/RaceStore";
+import "./RaceCentre.css";
 
 function formatRaceDate(value) {
   if (!value) return "Not set";

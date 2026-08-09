@@ -1,0 +1,10 @@
+.race-centre { border:0; background:transparent; box-shadow:none; padding:0; }
+.race-centre > .page-heading { padding:22px 24px; border:1px solid #28553b; border-radius:16px; background:linear-gradient(135deg,#123f29,#1f5d3d); color:white; box-shadow:0 10px 24px #123f2920; }
+.race-centre > .page-heading .page-kicker { color:#e0b638; }.race-centre > .page-heading h2 { color:white; }.race-centre > .page-heading .page-description { color:#d4e2d7; }
+.race-centre > .page-heading .primary-button { border:1px solid #efd063; background:#d4af37; color:#123f29; }
+.race-centre .content-card { border:1px solid #d5e0d8; box-shadow:0 7px 20px #123f290c; }
+.race-centre .card-heading { border-bottom:3px solid #d4af37; background:linear-gradient(135deg,#173f28,#245d3d); }.race-centre .card-heading .card-kicker { color:#e0b638; }.race-centre .card-heading h3 { color:white; }.race-centre .record-count { background:#d4af37; color:#123f29; }
+.race-centre .race-table th { border-bottom:2px solid #d4af37; background:#edf4ef; color:#234832; }.race-centre .race-table tbody tr:hover { background:#fffaf0; }
+.race-centre .secondary-button { background:#173f28; color:white; }.race-centre .neutral-button { background:#edf1ed; color:#3c5042; }
+.race-centre .race-form { border-top:5px solid #d4af37; }
+@media(max-width:700px){.race-centre > .page-heading{display:grid}.race-centre > .page-heading button{width:100%}}

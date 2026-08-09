@@ -7,6 +7,29 @@ import "./GroupTreatmentPanel.css";
 
 function today() { return new Date().toISOString().slice(0, 10); }
 
+function addDays(dateValue, days) {
+  const date = new Date(`${dateValue}T12:00:00`);
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function administrationDates(form, selectedWeekdays) {
+  if (form.scheduleType === "Single day") return [form.date];
+  if (form.scheduleType === "Consecutive days") {
+    return Array.from({ length: Math.max(1, Number(form.durationDays) || 1) }, (_, index) => addDays(form.date, index));
+  }
+
+  const dates = [];
+  let value = form.date;
+  const end = form.endDate || form.date;
+  while (value <= end) {
+    const day = new Date(`${value}T12:00:00`).getDay();
+    if (selectedWeekdays.includes(day)) dates.push(value);
+    value = addDays(value, 1);
+  }
+  return dates;
+}
+
 function isAutomaticallyAbsent(bird) {
   const status = String(bird.status || "").toLowerCase();
   return ["hospital", "lost", "died", "dead", "euthanised", "away"].some((word) => status.includes(word));
@@ -19,7 +42,8 @@ export default function GroupTreatmentPanel({ onSaved }) {
   const medicationNames = Array.from(new Set([...hospitalStore.getMedicationList(), ...healthcareStore.getMedicationList()])).sort((a, b) => a.localeCompare(b));
   const [previewing, setPreviewing] = useState(false);
   const [message, setMessage] = useState("");
-  const [form, setForm] = useState({ targetId: "", date: today(), category: "Medication", medicationChoice: "", medication: "", administrationMethod: "Drinking water", doseAmount: "", doseUnit: "ml", mixedWithAmount: "", mixedWithUnit: "litres of water", followUpDate: "", notes: "" });
+  const [form, setForm] = useState({ targetId: "", date: today(), category: "Medication", medicationChoice: "", medication: "", administrationMethod: "Drinking water", doseAmount: "", doseUnit: "ml", mixedWithAmount: "", mixedWithUnit: "litres of water", scheduleType: "Single day", durationDays: "1", endDate: "", session: "Any time", followUpDate: "", notes: "" });
+  const [selectedWeekdays, setSelectedWeekdays] = useState([1, 2, 3, 4, 5]);
   const [attendance, setAttendance] = useState({});
 
   const targetLoft = lofts.find((loft) => loft.id === form.targetId);
@@ -67,7 +91,14 @@ export default function GroupTreatmentPanel({ onSaved }) {
     const treatedBirds = candidates.filter((bird) => attendance[bird.birdId]?.selected).map((bird) => ({ birdId: bird.birdId, ringNumber: bird.ringNumber }));
     const excludedBirds = candidates.filter((bird) => !attendance[bird.birdId]?.selected).map((bird) => ({ birdId: bird.birdId, ringNumber: bird.ringNumber, currentLoft: bird.loft || "Unknown", reason: attendance[bird.birdId]?.reason || "Not present", status: "Outstanding" }));
 
-    healthcareStore.saveCampaign({ ...form, medication: form.medication.trim(), targetId: targetLoft.id, targetName: targetLoft.name, treatedBirds, excludedBirds });
+    const dates = administrationDates(form, selectedWeekdays);
+    if (!dates.length) {
+      setMessage("The selected schedule does not contain any administration dates.");
+      setPreviewing(false);
+      return;
+    }
+    const administrations = dates.map((date, index) => ({ id: `administration-${Date.now()}-${index}`, date, status: "Pending" }));
+    healthcareStore.saveCampaign({ ...form, medication: form.medication.trim(), targetId: targetLoft.id, targetName: targetLoft.name, treatedBirds, excludedBirds, selectedWeekdays, administrations });
     setMessage(`${treatedBirds.length} birds treated. ${excludedBirds.length} added to Outstanding Treatments.`);
     setPreviewing(false);
     onSaved?.();
@@ -90,6 +121,10 @@ export default function GroupTreatmentPanel({ onSaved }) {
             <label>Dose unit<select name="doseUnit" value={form.doseUnit} onChange={change}><option>ml</option><option>litres</option><option>fluid ounces</option><option>teaspoons</option><option>tablespoons</option><option>egg cup</option><option>drops</option><option>grams</option><option>mg</option><option>tablets</option><option>capsules</option><option>sachets</option></select></label>
             <label>Mixed with amount<input type="number" min="0" step="any" name="mixedWithAmount" value={form.mixedWithAmount} onChange={change} /></label>
             <label>Mixed with unit<select name="mixedWithUnit" value={form.mixedWithUnit} onChange={change}><option>litres of water</option><option>ml of water</option><option>fluid ounces of water</option><option>kg of food</option><option>grams of food</option><option>individual feed</option></select></label>
+            <label>Schedule<select name="scheduleType" value={form.scheduleType} onChange={change}><option>Single day</option><option>Consecutive days</option><option>Selected weekdays</option></select></label>
+            {form.scheduleType === "Consecutive days" && <label>Number of days<input type="number" min="1" name="durationDays" value={form.durationDays} onChange={change} /></label>}
+            {form.scheduleType === "Selected weekdays" && <><label>Schedule end date<input type="date" name="endDate" value={form.endDate} onChange={change} min={form.date} /></label><div className="weekday-selector full"><span>Administration days</span>{[[1,"Mon"],[2,"Tue"],[3,"Wed"],[4,"Thu"],[5,"Fri"],[6,"Sat"],[0,"Sun"]].map(([day,label]) => <label key={day}><input type="checkbox" checked={selectedWeekdays.includes(day)} onChange={() => setSelectedWeekdays((current) => current.includes(day) ? current.filter((value) => value !== day) : [...current, day])} />{label}</label>)}</div></>}
+            <label>Time / Session<select name="session" value={form.session} onChange={change}><option>Any time</option><option>Morning</option><option>Evening</option><option>Morning and evening</option></select></label>
             <label>Follow-up date<input type="date" name="followUpDate" value={form.followUpDate} onChange={change} /></label>
             <label className="full">Notes<textarea rows="3" name="notes" value={form.notes} onChange={change} /></label>
           </div>

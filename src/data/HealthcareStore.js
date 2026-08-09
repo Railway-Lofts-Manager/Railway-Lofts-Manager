@@ -63,6 +63,30 @@ const healthcareStore = {
     );
   },
 
+  getPlannerTasks() {
+    return loadState().campaigns.flatMap((campaign) =>
+      (campaign.administrations || [{ id: `${campaign.id}-single`, date: campaign.date, status: "Pending" }]).map((administration) => ({
+        ...administration,
+        campaignId: campaign.id,
+        source: "Healthcare",
+        category: campaign.category,
+        title: `${campaign.medication} — ${campaign.targetName}`,
+        detail: `${campaign.administrationMethod}${campaign.doseAmount ? ` • ${campaign.doseAmount} ${campaign.doseUnit}` : ""}`,
+        session: campaign.session || "Any time",
+      })),
+    );
+  },
+
+  updateAdministration(campaignId, administrationId, updates) {
+    const state = loadState();
+    const campaign = state.campaigns.find((record) => record.id === campaignId);
+    const administration = campaign?.administrations?.find((record) => record.id === administrationId);
+    if (!administration) return false;
+    Object.assign(administration, updates);
+    saveState(state);
+    return true;
+  },
+
   completeCatchUp(campaignId, birdId, date) {
     const state = loadState();
     const campaign = state.campaigns.find((record) => record.id === campaignId);

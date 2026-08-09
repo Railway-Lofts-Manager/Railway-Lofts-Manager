@@ -1,3 +1,5 @@
+import "./BirdRegister.css";
+
 export default function BirdRegister({
   birds,
   counts,
@@ -11,9 +13,10 @@ export default function BirdRegister({
   openBirdProfile,
 }) {
   return (
-    <>
+    <div className="bird-register-page">
       <section className="register-toolbar">
         <div>
+          <span className="register-kicker">Bird Management</span>
           <h3>Master Bird Register</h3>
           <p>
             {counts.total} bird{counts.total === 1 ? "" : "s"} saved on this computer
@@ -135,6 +138,6 @@ export default function BirdRegister({
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

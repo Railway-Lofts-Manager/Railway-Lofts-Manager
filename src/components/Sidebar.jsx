@@ -4,7 +4,7 @@ import healthcareStore from "../data/HealthcareStore";
 import "./Sidebar.css";
 
 const menuItems = [
-  { name: "Command Centre", icon: "🎯" },
+  { name: "Season Planner", icon: "📅" },
   { name: "Dashboard", icon: "📊" },
   { name: "Bird Register", icon: "🕊️" },
   { name: "Loft Configuration", icon: "🏠" },
@@ -13,7 +13,6 @@ const menuItems = [
   { name: "Ring Register", icon: "🔢" },
   { name: "Race Centre", icon: "🏁" },
   { name: "Health & Strays", icon: "❤️" },
-  { name: "Season Planner", icon: "📅" },
   { name: "Reports & Analytics", icon: "📈" },
   { name: "Archive Centre", icon: "🗄️" },
 ];

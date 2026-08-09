@@ -9,7 +9,6 @@ import LoftView from "./components/LoftView";
 import lofts from './data/lofts'
 import LoftConfiguration from './components/LoftConfiguration'
 import SetupPage from "./components/Setup/SetupPage";
-import Dashboard from "./components/Dashboard";
 import RaceCentre from "./components/RaceCentre";
 import HealthCentre from "./components/HealthCentre";
 import SeasonPlanner from "./components/SeasonPlanner";
@@ -251,7 +250,9 @@ const [showImportCentre, setShowImportCentre] = useState(false)
 
       const matchesStatus =
         statusFilter === 'All' ||
-        bird.status === statusFilter
+        (statusFilter === 'Young Bird'
+          ? bird.ageCategory === 'Young Bird'
+          : bird.status === statusFilter)
 
       return matchesText && matchesStatus
     })
@@ -478,11 +479,12 @@ function exportBirds() {
       <main className="main-content">
      <Topbar activePage={activePage} />
 
-        {activePage === 'Command Centre' && (
+        {activePage === 'Dashboard' && (
           <CommandCentre
             counts={counts}
             boxAssignments={boxAssignments}
             setActivePage={setActivePage}
+            setStatusFilter={setStatusFilter}
           />
         )}
 
@@ -533,7 +535,7 @@ function exportBirds() {
       setActivePage('Loft Configuration')
     }
     onComplete={() =>
-      setActivePage('Command Centre')
+      setActivePage('Dashboard')
     }
   />
 )}
@@ -559,10 +561,6 @@ function exportBirds() {
             assignments={boxAssignments}
             setSelectedBox={setSelectedBox}
           />
-        )}
-
-        {activePage === 'Dashboard' && (
-          <Dashboard birds={birds} />
         )}
 
         {activePage === 'Race Centre' && (

@@ -1,11 +1,13 @@
 import React from "react";
 import healthcareStore from "../data/HealthcareStore";
 import hospitalStore from "../data/HospitalStore";
+import "./CommandCentre.css";
 
 export default function CommandCentre({
   counts,
   boxAssignments,
   setActivePage,
+  setStatusFilter,
 }) {
   const assignments = Object.values(boxAssignments);
 
@@ -30,8 +32,24 @@ export default function CommandCentre({
     ["Health Alerts", healthcareAlerts, "H"],
   ];
 
+  const teamCards = [
+    { title: "Racing Team", value: counts.racing, icon: "🏁", filter: "Racing" },
+    { title: "Young Birds", value: counts.young, icon: "🕊️", filter: "Young Bird" },
+    { title: "Stock Birds", value: counts.stock, icon: "🥚", filter: "Stock" },
+    { title: "Hospital Occupants", value: hospitalStore.getState().admissions.filter((record) => record.status === "Active").length, icon: "🏥", page: "Health & Strays" },
+  ];
+
+  function openTeam(card) {
+    if (card.page) {
+      setActivePage(card.page);
+      return;
+    }
+    setStatusFilter(card.filter);
+    setActivePage("Bird Register");
+  }
+
   return (
-    <>
+    <div className="command-dashboard">
       <section className="stat-grid">
         {cards.map(([title, value, icon]) => (
           <article className="stat-card" key={title}>
@@ -42,6 +60,17 @@ export default function CommandCentre({
             </div>
           </article>
         ))}
+      </section>
+
+      <section className="command-team-section">
+        <div className="command-team-heading"><div><p>Live bird teams</p><h3>Bird Register Overview</h3></div><span>Click a card to open its records</span></div>
+        <div className="command-team-grid">
+          {teamCards.map((card) => (
+            <button type="button" className="command-team-card" key={card.title} onClick={() => openTeam(card)}>
+              <span>{card.icon}</span><div><small>{card.title}</small><strong>{card.value}</strong></div><b>Open →</b>
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="CommandCentre-grid">
@@ -97,6 +126,6 @@ export default function CommandCentre({
           </button>
         </article>
       </section>
-    </>
+    </div>
   );
 }

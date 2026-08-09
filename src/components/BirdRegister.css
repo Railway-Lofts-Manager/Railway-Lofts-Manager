@@ -1,0 +1,9 @@
+.bird-register-page { display:grid; gap:16px; }
+.bird-register-page .register-toolbar { margin:0; padding:22px 24px; border:1px solid #28553b; border-radius:16px; background:linear-gradient(135deg,#123f29,#1f5d3d); color:white; box-shadow:0 10px 24px #123f2920; }
+.register-kicker { display:block; margin-bottom:4px; color:#e0b638; font-size:12px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; }
+.bird-register-page .register-toolbar h3 { color:white; font-size:27px; }.bird-register-page .register-toolbar p { color:#d4e2d7; }
+.bird-register-page .register-toolbar .primary { border:1px solid #f0cd62; background:#d4af37; color:#123f29; }.bird-register-page .register-toolbar .secondary { border:1px solid #ffffff55; background:#ffffff14; color:white; }.bird-register-page .register-toolbar .secondary:hover { border-color:#d4af37; background:#d4af3724; }
+.bird-register-page .filters { margin:0; padding:12px; border-left:5px solid #d4af37; border-radius:10px; background:white; box-shadow:0 4px 13px #123f290c; }
+.bird-register-page .bird-register-table thead th { border-bottom:3px solid #d4af37; background:#173f28; color:#f6e7ad; }
+.bird-register-page .ring-number-link { color:#9b7414; font-weight:900; }
+@media(max-width:720px){.bird-register-page .register-toolbar{display:grid}.bird-register-page .register-actions{display:grid;width:100%}.bird-register-page .register-actions button{width:100%}}

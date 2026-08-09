@@ -331,7 +331,7 @@ export default function HealthCentre() {
 
       {healthcareView === "history" && <section className="hospital-register panel">
         <h3>Loft & Section Treatment History</h3>
-        {!healthcareStore.getState().campaigns.length ? <p>No whole-loft treatments recorded.</p> : <div className="table-wrap"><table><thead><tr><th>Date</th><th>Loft / Section</th><th>Treatment</th><th>Method</th><th>Treated</th><th>Excluded</th></tr></thead><tbody>{healthcareStore.getState().campaigns.slice().reverse().map((campaign) => <tr key={campaign.id}><td>{campaign.date}</td><td>{campaign.targetName}</td><td>{campaign.medication}<small>{campaign.doseAmount} {campaign.doseUnit}</small></td><td>{campaign.administrationMethod}</td><td>{campaign.treatedBirds.length}</td><td>{campaign.excludedBirds.length}</td></tr>)}</tbody></table></div>}
+        {!healthcareStore.getState().campaigns.length ? <p>No whole-loft treatments recorded.</p> : <div className="table-wrap"><table><thead><tr><th>Date</th><th>Loft / Section</th><th>Treatment</th><th>Method</th><th>Course Progress</th><th>Treated</th><th>Excluded</th></tr></thead><tbody>{healthcareStore.getState().campaigns.slice().reverse().map((campaign) => <tr key={campaign.id}><td>{campaign.date}</td><td>{campaign.targetName}</td><td>{campaign.medication}<small>{campaign.doseAmount} {campaign.doseUnit}</small></td><td>{campaign.administrationMethod}</td><td>{(campaign.administrations || []).filter((record) => record.status === "Completed").length}/{(campaign.administrations || []).length || 1} days</td><td>{campaign.treatedBirds.length}</td><td>{campaign.excludedBirds.length}</td></tr>)}</tbody></table></div>}
       </section>}
 
       {intakeType && (
