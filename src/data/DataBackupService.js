@@ -9,6 +9,7 @@ export const BACKUP_KEYS = [
   "loftCommanderHospital",
   "loftCommanderHealthcare",
   "loftCommanderSeasonPlanner",
+  "loftCommanderProductLibrary",
   "loft-commander-boxes",
 ];
 

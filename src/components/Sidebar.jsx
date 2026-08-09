@@ -12,6 +12,7 @@ const menuItems = [
   { name: "Breeding Centre", icon: "🥚" },
   { name: "Ring Register", icon: "🔢" },
   { name: "Race Centre", icon: "🏁" },
+  { name: "Feed Planner", icon: "🌽" },
   { name: "Health & Strays", icon: "❤️" },
   { name: "Reports & Analytics", icon: "📈" },
   { name: "Archive Centre", icon: "🗄️" },

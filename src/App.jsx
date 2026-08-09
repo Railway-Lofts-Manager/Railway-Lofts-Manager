@@ -12,6 +12,7 @@ import SetupPage from "./components/Setup/SetupPage";
 import RaceCentre from "./components/RaceCentre";
 import HealthCentre from "./components/HealthCentre";
 import SeasonPlanner from "./components/SeasonPlanner";
+import FeedPlanner from "./components/FeedPlanner";
 import ReportsAnalytics from "./components/ReportsAnalytics";
 import ArchiveCentre from "./components/ArchiveCentre";
 import Sidebar from "./components/Sidebar";
@@ -573,6 +574,10 @@ function exportBirds() {
 
         {activePage === 'Season Planner' && (
           <SeasonPlanner />
+        )}
+
+        {activePage === 'Feed Planner' && (
+          <FeedPlanner />
         )}
 
         {activePage === 'Reports & Analytics' && (
