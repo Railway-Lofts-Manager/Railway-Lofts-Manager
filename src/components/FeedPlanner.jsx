@@ -1,46 +1,64 @@
-import { useEffect, useState } from "react";
-import productStore from "../data/ProductStore";
-import ProductLibrary from "./FeedPlanner/ProductLibrary";
+import { useState } from "react";
 import "./FeedPlanner.css";
 
-export default function FeedPlanner() {
-  const [products, setProducts] = useState(productStore.getProducts());
-  const [tab, setTab] = useState("library");
+const PROGRAMMES = [
+  { id: "widowhood-cocks", icon: "🐦", title: "Widowhood Cocks", description: "Race preparation, recovery and weekly feeding for widowhood cocks." },
+  { id: "widowhood-hens", icon: "🕊️", title: "Widowhood Hens", description: "A separate programme matched to the hens’ work and racing schedule." },
+  { id: "roundabout-team", icon: "🔄", title: "Roundabout Team", description: "Coordinated plans for cocks and hens flown on the roundabout system." },
+  { id: "young-birds", icon: "🐣", title: "Young Birds", description: "Growth, training, race build-up and recovery for the young-bird team." },
+  { id: "stock-birds", icon: "🥚", title: "Stock Birds", description: "Seasonal maintenance, winter, pairing, breeding and moulting plans." },
+  { id: "breeding-pairs", icon: "🪺", title: "Breeding Pairs", description: "Feed and supplement planning for pairing, eggs and rearing youngsters." },
+  { id: "custom", icon: "＋", title: "Custom Programme", description: "Create another programme for a particular team, loft or flying method." },
+];
 
-  useEffect(() => productStore.subscribe(setProducts), []);
+export default function FeedPlanner() {
+  const [selected, setSelected] = useState(null);
+  const programme = PROGRAMMES.find((item) => item.id === selected);
+
+  if (programme) {
+    return (
+      <div className="feed-planner-page">
+        <button className="feed-back-button" onClick={() => setSelected(null)}>← Back to Feed Plans</button>
+        <header className="feed-planner-hero feed-programme-hero">
+          <div className="feed-programme-heading-icon">{programme.icon}</div>
+          <div><p className="feed-kicker">Feeding programme</p><h1>{programme.title}</h1><p>{programme.description}</p></div>
+        </header>
+        <section className="feed-content-card feed-programme-empty">
+          <span>🗓️</span>
+          <h2>{programme.title} plan</h2>
+          <p>This plan will be created using suitable products from this fancier’s private Product Library. Products belonging to another loft will never be included.</p>
+          <button className="feed-primary-button">Create this feed plan</button>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="feed-planner-page">
       <header className="feed-planner-hero">
-        <div>
-          <p className="feed-kicker">Loft Commander nutrition</p>
-          <h1>Feed Planner</h1>
-          <p>Build adaptable feed and drink programmes using the products available to each fancier.</p>
-        </div>
-        <div className="feed-hero-count"><strong>{products.filter((product) => !product.archived).length}</strong><span>active products</span></div>
+        <div><p className="feed-kicker">Loft Commander nutrition</p><h1>Feed Planner</h1><p>Select a team to open its own feeding and drinking programme.</p></div>
+        <div className="feed-hero-count"><strong>{PROGRAMMES.length - 1}</strong><span>programme types</span></div>
       </header>
 
-      <nav className="feed-planner-tabs" aria-label="Feed Planner sections">
-        <button className={tab === "library" ? "active" : ""} onClick={() => setTab("library")}>Product Library</button>
-        <button className={tab === "create" ? "active" : ""} onClick={() => setTab("create")}>Create Feed Plan</button>
-        <button className={tab === "plans" ? "active" : ""} onClick={() => setTab("plans")}>Saved Plans</button>
-        <button className={tab === "performance" ? "active" : ""} onClick={() => setTab("performance")}>Feed Performance</button>
-      </nav>
+      <section className="feed-plan-dashboard-heading">
+        <div><p className="feed-kicker">Team programmes</p><h2>Which birds are you planning for?</h2></div>
+        <p>Each programme remains separate and uses only products saved in this fancier’s Product Library.</p>
+      </section>
 
-      {tab === "library" && <ProductLibrary products={products} onSave={(product) => productStore.saveProduct(product)} onArchive={(id) => productStore.archiveProduct(id)} onRestore={(id) => productStore.restoreProduct(id)} onDelete={(id) => productStore.deleteProduct(id)} />}
+      <section className="feed-programme-grid">
+        {PROGRAMMES.map((item) => (
+          <button key={item.id} className={`feed-programme-tile ${item.id === "custom" ? "custom" : ""}`} onClick={() => setSelected(item.id)}>
+            <span className="feed-programme-icon">{item.icon}</span>
+            <span className="feed-programme-copy"><strong>{item.title}</strong><small>{item.description}</small></span>
+            <b>Open plan →</b>
+          </button>
+        ))}
+      </section>
 
-      {tab !== "library" && (
-        <section className="feed-content-card feed-next-stage">
-          <span>{tab === "create" ? "🗓️" : tab === "plans" ? "📋" : "📈"}</span>
-          <h2>{tab === "create" ? "Create Feed Plan" : tab === "plans" ? "Saved Plans" : "Feed Performance"}</h2>
-          <p>{tab === "create"
-            ? "The programme wizard will use products from your Product Library. Add and verify the products first so quantities and instructions can be calculated safely."
-            : tab === "plans"
-              ? "Versioned feeding programmes and their complete change history will appear here."
-              : "Race results, returns and programme comparisons will appear here once saved plans are linked to races."}</p>
-          <button className="feed-primary-button" onClick={() => setTab("library")}>Open Product Library</button>
-        </section>
-      )}
+      <section className="feed-planner-lower-actions">
+        <button className="feed-content-card"><span>📋</span><strong>Saved Plans</strong><small>Open earlier versions and compare changes.</small></button>
+        <button className="feed-content-card"><span>📈</span><strong>Feed Performance</strong><small>Compare plans with results and return percentages.</small></button>
+      </section>
     </div>
   );
 }

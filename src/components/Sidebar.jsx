@@ -13,6 +13,7 @@ const menuItems = [
   { name: "Ring Register", icon: "🔢" },
   { name: "Race Centre", icon: "🏁" },
   { name: "Feed Planner", icon: "🌽" },
+  { name: "Product Library", icon: "📦" },
   { name: "Health & Strays", icon: "❤️" },
   { name: "Reports & Analytics", icon: "📈" },
   { name: "Archive Centre", icon: "🗄️" },
