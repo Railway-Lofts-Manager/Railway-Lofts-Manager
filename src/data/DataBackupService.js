@@ -4,6 +4,8 @@ export const BACKUP_KEYS = [
   "loftCommanderCustomerSettings",
   "loftCommanderRingRegister",
   "loftCommanderBreedingSeasons",
+  "loftCommanderRaceProgramme",
+  "loftCommanderRacePoints",
   "loft-commander-boxes",
 ];
 

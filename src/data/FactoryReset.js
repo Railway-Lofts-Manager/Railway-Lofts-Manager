@@ -13,6 +13,8 @@ const STORAGE_KEYS = [
   "loftCommanderCustomerSettings",
   "loftCommanderRingRegister",
   "loftCommanderBreedingSeasons",
+  "loftCommanderRaceProgramme",
+  "loftCommanderRacePoints",
   "loft-commander-boxes",
   "loft-commander-birds",
   "railway-lofts-birds",

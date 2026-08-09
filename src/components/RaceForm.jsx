@@ -1,24 +1,80 @@
 import { useState } from "react";
+import racePointStore from "../data/RacePointStore";
+
+const ADD_NEW_RACE_POINT = "__add_new_race_point__";
 
 const emptyForm = {
   racePoint: "",
   miles: "",
-  yards: "",
+  yards: "0",
   raceDate: "",
   status: "Upcoming",
 };
 
-export default function RaceForm({ onSave, onCancel }) {
-  const [formData, setFormData] = useState(emptyForm);
+export default function RaceForm({ initialRace, onSave, onCancel }) {
+  const [racePoints, setRacePoints] = useState(() => racePointStore.getRacePoints());
+  const initialStoredPoint = racePoints.find(
+    (point) => point.name.toLowerCase() === String(initialRace?.racePoint || "").toLowerCase(),
+  );
+  const [addingRacePoint, setAddingRacePoint] = useState(
+    () => !initialRace && racePoints.length === 0,
+  );
+  const [selectedRacePoint, setSelectedRacePoint] = useState(() =>
+    initialStoredPoint?.id || (initialRace?.racePoint ? "__current_race_point__" : ""),
+  );
+  const [formData, setFormData] = useState(() =>
+    initialRace
+      ? {
+          ...emptyForm,
+          ...initialRace,
+          miles: String(initialRace.miles ?? ""),
+          yards: String(initialRace.yards ?? "0"),
+        }
+      : emptyForm,
+  );
   const [error, setError] = useState("");
 
   function handleChange(event) {
     const { name, value } = event.target;
+    setFormData((currentData) => ({ ...currentData, [name]: value }));
+    setError("");
+  }
 
-    setFormData((currentData) => ({
-      ...currentData,
-      [name]: value,
-    }));
+  function handleRacePointSelection(event) {
+    const value = event.target.value;
+
+    if (value === ADD_NEW_RACE_POINT) {
+      setAddingRacePoint(true);
+      setSelectedRacePoint(ADD_NEW_RACE_POINT);
+      setFormData((currentData) => ({
+        ...currentData,
+        racePoint: "",
+        miles: "",
+        yards: "0",
+      }));
+      setError("");
+      return;
+    }
+
+    const racePoint = racePoints.find((point) => point.id === value);
+    setAddingRacePoint(false);
+    setSelectedRacePoint(value);
+
+    if (value === "__current_race_point__" && initialRace) {
+      setFormData((currentData) => ({
+        ...currentData,
+        racePoint: initialRace.racePoint,
+        miles: String(initialRace.miles ?? ""),
+        yards: String(initialRace.yards ?? "0"),
+      }));
+    } else if (racePoint) {
+      setFormData((currentData) => ({
+        ...currentData,
+        racePoint: racePoint.name,
+        miles: String(racePoint.miles),
+        yards: String(racePoint.yards),
+      }));
+    }
 
     setError("");
   }
@@ -31,7 +87,7 @@ export default function RaceForm({ onSave, onCancel }) {
     const yards = Number(formData.yards);
 
     if (!racePoint) {
-      setError("Please enter a race point.");
+      setError("Please select or enter a race point.");
       return;
     }
 
@@ -45,19 +101,21 @@ export default function RaceForm({ onSave, onCancel }) {
       return;
     }
 
-    const newRace = {
+    racePointStore.saveRacePoint({ name: racePoint, miles, yards });
+    setRacePoints(racePointStore.getRacePoints());
+
+    onSave({
+      ...initialRace,
       id:
-        typeof crypto !== "undefined" && crypto.randomUUID
-          ? crypto.randomUUID()
-          : Date.now(),
+        initialRace?.id ||
+        globalThis.crypto?.randomUUID?.() ||
+        `race-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       racePoint,
       miles,
       yards,
       raceDate: formData.raceDate,
       status: formData.status,
-    };
-
-    onSave(newRace);
+    });
   }
 
   return (
@@ -65,7 +123,7 @@ export default function RaceForm({ onSave, onCancel }) {
       <div className="card-heading">
         <div>
           <p className="card-kicker">Race Programme</p>
-          <h3>Add New Race</h3>
+          <h3>{initialRace ? "Edit Race" : "Add New Race"}</h3>
         </div>
       </div>
 
@@ -73,64 +131,56 @@ export default function RaceForm({ onSave, onCancel }) {
 
       <div className="form-grid">
         <div className="form-group form-group-wide">
-          <label htmlFor="racePoint">Race Point</label>
-          <input
-            id="racePoint"
-            name="racePoint"
-            type="text"
-            value={formData.racePoint}
-            onChange={handleChange}
-            placeholder="Example: Stratford"
+          <label htmlFor="racePointChoice">Race Point</label>
+          <select
+            id="racePointChoice"
+            value={selectedRacePoint}
+            onChange={handleRacePointSelection}
             autoFocus
-          />
+          >
+            <option value="">Select race point</option>
+            {initialRace?.racePoint && !initialStoredPoint && (
+              <option value="__current_race_point__">{initialRace.racePoint}</option>
+            )}
+            {racePoints.map((point) => (
+              <option key={point.id} value={point.id}>{point.name}</option>
+            ))}
+            <option value={ADD_NEW_RACE_POINT}>+ Add New Race Point</option>
+          </select>
         </div>
+
+        {addingRacePoint && (
+          <div className="form-group form-group-wide">
+            <label htmlFor="racePoint">New Race Point</label>
+            <input
+              id="racePoint"
+              name="racePoint"
+              type="text"
+              value={formData.racePoint}
+              onChange={handleChange}
+              placeholder="Example: Stratford"
+            />
+          </div>
+        )}
 
         <div className="form-group">
           <label htmlFor="miles">Miles</label>
-          <input
-            id="miles"
-            name="miles"
-            type="number"
-            min="0"
-            value={formData.miles}
-            onChange={handleChange}
-            placeholder="68"
-          />
+          <input id="miles" name="miles" type="number" min="0" value={formData.miles} onChange={handleChange} placeholder="68" />
         </div>
 
         <div className="form-group">
           <label htmlFor="yards">Yards</label>
-          <input
-            id="yards"
-            name="yards"
-            type="number"
-            min="0"
-            max="1759"
-            value={formData.yards}
-            onChange={handleChange}
-            placeholder="0"
-          />
+          <input id="yards" name="yards" type="number" min="0" max="1759" value={formData.yards} onChange={handleChange} placeholder="0" />
         </div>
 
         <div className="form-group">
           <label htmlFor="raceDate">Race Date</label>
-          <input
-            id="raceDate"
-            name="raceDate"
-            type="date"
-            value={formData.raceDate}
-            onChange={handleChange}
-          />
+          <input id="raceDate" name="raceDate" type="date" value={formData.raceDate} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label htmlFor="status">Status</label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-          >
+          <select id="status" name="status" value={formData.status} onChange={handleChange}>
             <option value="Upcoming">Upcoming</option>
             <option value="Marked">Marked</option>
             <option value="Liberated">Liberated</option>
@@ -142,16 +192,9 @@ export default function RaceForm({ onSave, onCancel }) {
 
       <div className="form-actions">
         <button type="submit" className="primary-button">
-          Save Race
+          {initialRace ? "Save Changes" : "Save Race"}
         </button>
-
-        <button
-          type="button"
-          className="neutral-button"
-          onClick={onCancel}
-        >
-          Cancel
-        </button>
+        <button type="button" className="neutral-button" onClick={onCancel}>Cancel</button>
       </div>
     </form>
   );

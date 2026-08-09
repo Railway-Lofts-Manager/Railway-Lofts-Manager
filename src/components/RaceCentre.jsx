@@ -1,18 +1,58 @@
 import { useState } from "react";
-import startingRaces from "../data/races";
 import RaceForm from "./RaceForm";
+import raceStore from "../data/RaceStore";
+
+function formatRaceDate(value) {
+  if (!value) return "Not set";
+
+  const [year, month, day] = value.split("-");
+  return year && month && day ? `${day}/${month}/${year}` : value;
+}
 
 export default function RaceCentre() {
-  const [races, setRaces] = useState(startingRaces);
+  const [races, setRaces] = useState(() => raceStore.getRaces());
   const [showForm, setShowForm] = useState(false);
+  const [editingRace, setEditingRace] = useState(null);
 
-  function handleAddRace(newRace) {
-    setRaces((currentRaces) => [...currentRaces, newRace]);
+  function refreshRaces() {
+    setRaces(raceStore.getRaces());
+  }
+
+  function handleSaveRace(race) {
+    raceStore.saveRace(race);
+    refreshRaces();
+    setEditingRace(null);
     setShowForm(false);
   }
 
+  function openAddRace() {
+    setEditingRace(null);
+    setShowForm(true);
+  }
+
+  function openEditRace(race) {
+    setEditingRace(race);
+    setShowForm(true);
+  }
+
+  function cancelForm() {
+    setEditingRace(null);
+    setShowForm(false);
+  }
+
+  function deleteRace(race) {
+    const confirmed = window.confirm(
+      `Delete ${race.racePoint} from the race programme?`,
+    );
+
+    if (!confirmed) return;
+
+    raceStore.deleteRace(race.id);
+    refreshRaces();
+  }
+
   function getStatusClass(status) {
-    return `status-badge status-${status.toLowerCase()}`;
+    return `status-badge status-${String(status || "upcoming").toLowerCase()}`;
   }
 
   return (
@@ -27,11 +67,7 @@ export default function RaceCentre() {
         </div>
 
         {!showForm && (
-          <button
-            type="button"
-            className="primary-button"
-            onClick={() => setShowForm(true)}
-          >
+          <button type="button" className="primary-button" onClick={openAddRace}>
             + Add Race
           </button>
         )}
@@ -39,8 +75,10 @@ export default function RaceCentre() {
 
       {showForm && (
         <RaceForm
-          onSave={handleAddRace}
-          onCancel={() => setShowForm(false)}
+          key={editingRace?.id || "new-race"}
+          initialRace={editingRace}
+          onSave={handleSaveRace}
+          onCancel={cancelForm}
         />
       )}
 
@@ -78,25 +116,28 @@ export default function RaceCentre() {
               ) : (
                 races.map((race) => (
                   <tr key={race.id}>
-                    <td>
-                      <strong>{race.racePoint}</strong>
-                    </td>
-
-                    <td>
-                      {race.miles} miles, {race.yards} yards
-                    </td>
-
-                    <td>{race.raceDate || "Not set"}</td>
-
+                    <td><strong>{race.racePoint}</strong></td>
+                    <td>{race.miles} miles, {race.yards} yards</td>
+                    <td>{formatRaceDate(race.raceDate)}</td>
                     <td>
                       <span className={getStatusClass(race.status)}>
                         {race.status}
                       </span>
                     </td>
-
                     <td>
-                      <button type="button" className="secondary-button">
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => openEditRace(race)}
+                      >
                         Edit
+                      </button>{" "}
+                      <button
+                        type="button"
+                        className="neutral-button"
+                        onClick={() => deleteRace(race)}
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
