@@ -56,6 +56,40 @@ export default function ProductDetails({ product, onBack, onEdit, onArchive, onR
             <Detail title="Programme stages">{product.programmeStages}</Detail>
           </dl>
         </article>
+        <article className="feed-content-card product-planner-analysis">
+          <p className="feed-kicker">Planner analysis</p>
+          <h3>How Loft Commander understands this product</h3>
+          {product.plannerAnalysis ? <dl className="product-detail-list">
+            <Detail title="Planner status">{product.plannerAnalysis.confidence}</Detail>
+            <Detail title="Recognised roles">{product.plannerAnalysis.roles}</Detail>
+            <Detail title="Recognised grains and seeds">{product.plannerAnalysis.recognisedIngredients?.map((ingredient) => ingredient.name)}</Detail>
+            <Detail title="Use triggers">{product.plannerAnalysis.triggers}</Detail>
+            <Detail title="Restrictions">{product.plannerAnalysis.restrictions}</Detail>
+            <Detail title="Suitable birds">{product.plannerAnalysis.suitableFor}</Detail>
+            <Detail title="Programme stages">{product.plannerAnalysis.stages}</Detail>
+            <Detail title="Missing information">{product.plannerAnalysis.missingInformation}</Detail>
+            {product.plannerAnalysis.waterProfile && <Detail title="Water scheduling">{product.plannerAnalysis.waterProfile.schedulingDecision}</Detail>}
+          </dl> : <p className="feed-muted">This product has not yet been analysed. Return to the Product Library and choose Analyse all products.</p>}
+          {product.plannerAnalysis?.recognisedIngredients?.length > 0 && <div className="product-mixing-rules">
+            {product.plannerAnalysis.recognisedIngredients.map((ingredient) => <div className="product-mixing-rule" key={ingredient.id}>
+              <strong>{ingredient.name}</strong>
+              <span>{ingredient.family}</span>
+              <p>{ingredient.primaryContributions.join(" · ")}</p>
+              {ingredient.nutrientReference && <small>Reference average: {ingredient.nutrientReference.protein}% protein · {ingredient.nutrientReference.fat}% fat · {ingredient.nutrientReference.fibre}% fibre{ingredient.nutrientReference.starch != null ? ` · ${ingredient.nutrientReference.starch}% starch` : ""} ({ingredient.nutrientReference.unit})</small>}
+            </div>)}
+          </div>}
+          {product.plannerAnalysis?.mixtureComposition && <div className="product-mixture-composition">
+            <h4>Mixture breakdown</h4>
+            <p>{product.plannerAnalysis.mixtureComposition.accuracy}</p>
+            {product.plannerAnalysis.mixtureComposition.warnings?.length > 0 && <ul>{product.plannerAnalysis.mixtureComposition.warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul>}
+            <div className="product-mixing-rules">
+              {product.plannerAnalysis.mixtureComposition.ingredients.map((ingredient,index) => <div className="product-mixing-rule" key={`${ingredient.name}-${index}`}>
+                <strong>{ingredient.name}</strong>
+                <span>{ingredient.percentage == null ? "Percentage not published" : `${ingredient.percentage}% of mixture`}</span>
+              </div>)}
+            </div>
+          </div>}
+        </article>
         {product.mixingRules?.length > 0 && <article className="feed-content-card product-mixing-card"><h3>Mixing details</h3><div className="product-mixing-rules">{product.mixingRules.map((rule, index) => <div className="product-mixing-rule" key={`${rule.context}-${index}`}><strong>{rule.amount} {rule.unit}</strong><span>per {rule.basisAmount} {rule.basisUnit}</span><p>{rule.context}</p>{rule.durationDays && <small>Course: {rule.durationDays} days</small>}{rule.userSupplied && <small>User-supplied routine</small>}{rule.locked && <small>Label dose — planner must not alter it</small>}</div>)}</div></article>}
         {product.historicalUses?.length > 0 && <article className="feed-content-card product-history-use-card"><h3>Original Young Bird Plan uses</h3><ul>{product.historicalUses.map((use) => <li key={use}>{use}</li>)}</ul></article>}
         <article className="feed-content-card">

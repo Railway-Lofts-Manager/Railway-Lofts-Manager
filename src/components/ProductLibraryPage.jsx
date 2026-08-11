@@ -26,6 +26,7 @@ export default function ProductLibraryPage() {
           onArchive={(id) => productStore.archiveProduct(id)}
           onRestore={(id) => productStore.restoreProduct(id)}
           onDelete={(id) => productStore.deleteProduct(id)}
+          onReanalyse={() => productStore.reanalyseProducts()}
         />
       </div>
     </div>

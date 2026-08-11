@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import ProductDetails from "./ProductDetails";
 import ProductForm from "./ProductForm";
 
-export default function ProductLibrary({ products, onSave, onArchive, onRestore, onDelete }) {
+export default function ProductLibrary({ products, onSave, onArchive, onRestore, onDelete, onReanalyse }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All products");
   const [showArchived, setShowArchived] = useState(false);
@@ -38,7 +38,10 @@ export default function ProductLibrary({ products, onSave, onArchive, onRestore,
           <h2>Product Library</h2>
           <p>Store feed, drink products, supplements and their verified instructions in one place.</p>
         </div>
-        <button className="feed-primary-button" onClick={() => setEditing({})}>＋ Add product</button>
+        <div className="product-library-actions">
+          <button className="feed-secondary-button" onClick={onReanalyse}>Analyse all products</button>
+          <button className="feed-primary-button" onClick={() => setEditing({})}>＋ Add product</button>
+        </div>
       </section>
 
       <section className="feed-content-card product-filters">
@@ -57,6 +60,7 @@ export default function ProductLibrary({ products, onSave, onArchive, onRestore,
                 <h3>{product.name}</h3>
                 <p>{product.manufacturer || "Manufacturer not recorded"}</p>
                 {product.primaryJob && <div className="product-job"><small>Primary job</small><strong>{product.primaryJob}</strong></div>}
+                <div className="product-analysis-status"><small>Planner analysis</small><strong>{product.plannerAnalysis?.confidence || "Not analysed"}</strong></div>
                 <div className="product-card-footer"><span className={product.verified ? "verified" : "review"}>{product.verified ? "✓ Verified" : "Review required"}</span><strong>Open product →</strong></div>
               </div>
             </button>
