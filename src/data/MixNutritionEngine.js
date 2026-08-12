@@ -100,9 +100,14 @@ export function buildNutritionShares(products, context) {
     const profile = nutritionProfile(product);
     const score = Object.entries(goal.weights).reduce((total,[trait,weight]) => total+(profile[trait] || 0)*weight,0);
     return {product,profile,score:Math.max(.02,score)};
-  });
-  const totalScore = scored.reduce((sum,item) => sum+item.score,0);
-  const raw = scored.map((item) => ({...item,exactPercent:item.score/totalScore*100}));
+  }).sort((a,b) => b.score-a.score);
+  const bestScore = scored[0]?.score || 0;
+  // Reconsider the entire library on every calculation, but only use products
+  // that materially contribute to today's nutritional goal. This prevents a
+  // weak product receiving a token share merely because it exists in storage.
+  const selected = scored.filter((item,index) => index === 0 || item.score >= bestScore*.72).slice(0,4);
+  const totalScore = selected.reduce((sum,item) => sum+item.score,0);
+  const raw = selected.map((item) => ({...item,exactPercent:item.score/totalScore*100}));
   const shares = raw.map((item) => ({...item,percent:Math.max(1,Math.round(item.exactPercent))}));
   let difference = 100-shares.reduce((sum,item) => sum+item.percent,0);
   while (difference !== 0) {
