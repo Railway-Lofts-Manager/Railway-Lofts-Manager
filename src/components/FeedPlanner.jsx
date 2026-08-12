@@ -1,47 +1,915 @@
-import { useEffect,useMemo,useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import productStore from "../data/ProductStore";
 import raceStore from "../data/RaceStore";
 import { generateAdaptiveWeek } from "../data/AdaptiveFeedPlannerEngine";
-import { getAdaptivePlannerSummaries,loadAdaptivePlanner,saveAdaptivePlanner } from "../data/AdaptivePlannerStore";
-import { getDailyWorkload,saveDailyWorkload } from "../data/DailyWorkloadStore";
+import {
+  getAdaptivePlannerSummaries,
+  loadAdaptivePlanner,
+  saveAdaptivePlanner,
+} from "../data/AdaptivePlannerStore";
+import {
+  getDailyWorkload,
+  saveDailyWorkload,
+} from "../data/DailyWorkloadStore";
+import { getGrainById } from "../data/GrainNutritionData";
 import "./FeedPlanner.css";
 
-const TEAMS=[
-  {id:"widowhood-cocks",icon:"🐦",name:"Widowhood cocks",description:"Live race preparation for the widowhood cock team.",racing:true},
-  {id:"widowhood-hens",icon:"🕊️",name:"Widowhood hens",description:"A separate live plan for the hens’ workload and races.",racing:true},
-  {id:"roundabout-team",icon:"🔄",name:"Roundabout team",description:"One coordinated live plan for roundabout cocks and hens.",racing:true},
-  {id:"young-birds",icon:"🐣",name:"Young birds",description:"Growth, training, racing and recovery for the young team.",racing:true},
-  {id:"stock-birds",icon:"🏠",name:"Stock birds",description:"Condition, maintenance, winter and moulting support.",racing:false},
-  {id:"breeding-pairs",icon:"🪺",name:"Breeding pairs",description:"Pairing, eggs, rearing and parent-condition feeding.",racing:false},
-  {id:"custom",icon:"＋",name:"Custom planner",description:"Describe a loft problem or special goal and create a temporary analysed plan.",racing:false,custom:true},
+const TEAMS = [
+  {
+    id: "widowhood-cocks",
+    icon: "🐦",
+    name: "Widowhood cocks",
+    description: "Live race preparation for the widowhood cock team.",
+    racing: true,
+  },
+  {
+    id: "widowhood-hens",
+    icon: "🕊️",
+    name: "Widowhood hens",
+    description: "A separate live plan for the hens’ workload and races.",
+    racing: true,
+  },
+  {
+    id: "roundabout-team",
+    icon: "🔄",
+    name: "Roundabout team",
+    description: "One coordinated live plan for roundabout cocks and hens.",
+    racing: true,
+  },
+  {
+    id: "young-birds",
+    icon: "🐣",
+    name: "Young birds",
+    description: "Growth, training, racing and recovery for the young team.",
+    racing: true,
+  },
+  {
+    id: "stock-birds",
+    icon: "🏠",
+    name: "Stock birds",
+    description: "Condition, maintenance, winter and moulting support.",
+    racing: false,
+  },
+  {
+    id: "breeding-pairs",
+    icon: "🪺",
+    name: "Breeding pairs",
+    description: "Pairing, eggs, rearing and parent-condition feeding.",
+    racing: false,
+  },
+  {
+    id: "custom",
+    icon: "＋",
+    name: "Custom planner",
+    description:
+      "Describe a loft problem or special goal and create a temporary analysed plan.",
+    racing: false,
+    custom: true,
+  },
 ];
-const nextSaturday=()=>{const date=new Date();date.setDate(date.getDate()+((6-date.getDay()+7)%7));return date.toISOString().slice(0,10);};
-const EMPTY_ACTIVITY={activityType:"Loft exercise",distanceMiles:"",durationMinutes:"30",effort:"Normal",birdCondition:"On form"};
-const productPurpose=(product)=>product.primaryJob||product.plannerAnalysis?.roles?.join(", ")||product.category;
+const nextSaturday = () => {
+  const date = new Date();
+  date.setDate(date.getDate() + ((6 - date.getDay() + 7) % 7));
+  return date.toISOString().slice(0, 10);
+};
+const EMPTY_ACTIVITY = {
+  activityType: "Loft exercise",
+  distanceMiles: "",
+  durationMinutes: "30",
+  effort: "Normal",
+  birdCondition: "On form",
+};
+const productPurpose = (product) =>
+  product.primaryJob ||
+  product.plannerAnalysis?.roles?.join(", ") ||
+  product.category;
 
-function TeamDashboard({onOpen}){const summaries=getAdaptivePlannerSummaries();return <main className="feed-planner-page"><header className="feed-planner-hero"><div><p className="feed-kicker">Loft Commander nutrition</p><h1>Adaptive Feed Planner</h1><p>Choose a team. Every tile has its own live planner, products, race target, workload and saved history.</p></div><div className="feed-hero-count"><strong>{TEAMS.length}</strong><span>team planners</span></div></header><section className="feed-plan-dashboard-heading"><div><p className="feed-kicker">Live team programmes</p><h2>Which birds are you planning for?</h2></div><p>Each team remains separate, so changing one planner cannot alter another team.</p></section><section className="feed-programme-grid adaptive-team-grid">{TEAMS.map((team)=>{const saved=summaries[team.id],count=team.id==="breeding-pairs"?`${saved?.pairCount||0} pairs`:`${saved?.birdCount||0} birds`;return <button className="feed-programme-tile" key={team.id} onClick={()=>onOpen(team.id)}><span className="feed-programme-icon">{team.icon}</span><span className="feed-programme-copy"><strong>{team.name}</strong><small>{team.description}</small></span><b>{saved?`${count} · Open live planner →`:"Create live planner →"}</b></button>;})}</section></main>;}
-
-function TeamLivePlanner({team,products,onBack}){
-  const defaults={teamId:team.id,team:team.name,birdCount:"20",pairCount:"10",breedingStage:"Pairing and laying",youngBirdCount:"0",youngBirdAge:"0–7 days",mineralTeaspoonsPerEggCup:"8",customRequest:"",hasRace:team.racing,racePoint:"",raceDistance:"",raceDate:nextSaturday(),weekEnding:nextSaturday(),excludedProductIds:[]};
-  const [settings,setSettings]=useState(()=>{const saved=loadAdaptivePlanner(team.id)||{};return {...defaults,...saved,excludedProductIds:saved.excludedProductIds||[]};}),[selectedDate,setSelectedDate]=useState(""),[activity,setActivity]=useState(EMPTY_ACTIVITY),[message,setMessage]=useState("");
-  const races=useMemo(()=>raceStore.getRaces().filter((race)=>race.raceDate&&race.status!=="Cancelled").sort((a,b)=>a.raceDate.localeCompare(b.raceDate)),[]);
-  const usableProducts=useMemo(()=>products.filter((product)=>!product.archived&&product.inStock!==false&&["Corn / Feed Mix","Straight Grain","Mineral / Grit","Supplement","Drink Additive"].includes(product.category)),[products]);
-  const excludedIds=settings.excludedProductIds||[],chosenIds=usableProducts.filter((product)=>!excludedIds.includes(product.id)).map((product)=>product.id),planKey=`adaptive-${team.id}`;
-  const provisional=generateAdaptiveWeek({...settings,team:team.name,productIds:chosenIds},products,[]),activities=provisional.days.map((day)=>getDailyWorkload(planKey,day.date)).filter(Boolean),plan=generateAdaptiveWeek({...settings,team:team.name,productIds:chosenIds},products,activities),selectedDay=plan.days.find((day)=>day.date===selectedDate)||plan.days[0];
-  useEffect(()=>{if(!selectedDate||!plan.days.some((day)=>day.date===selectedDate))setSelectedDate(plan.days[0]?.date||"");},[plan.weekStart,plan.weekEnd]);
-  useEffect(()=>{const saved=selectedDate?getDailyWorkload(planKey,selectedDate):null;setActivity(saved||EMPTY_ACTIVITY);},[selectedDate,planKey]);
-  const update=(field,value)=>setSettings((current)=>({...current,[field]:value}));
-  function saveSettings(){const {productIds:_legacyProductIds,...current}=settings;const saved=saveAdaptivePlanner(team.id,{...current,team:team.name,excludedProductIds:excludedIds});setSettings(saved);setMessage(`${team.name} planner saved. All new products will be assessed automatically.`);}
-  function chooseRace(value){if(value==="manual"){update("hasRace",true);return;}if(value==="none"){setSettings((current)=>({...current,hasRace:false,raceId:null,racePoint:"",raceDistance:"",raceDate:current.weekEnding||nextSaturday()}));return;}const race=races.find((item)=>item.id===value);if(race)setSettings((current)=>({...current,hasRace:true,raceId:race.id,racePoint:race.racePoint||"",raceDistance:String(race.miles||""),raceDate:race.raceDate}));}
-  function saveActivity(event){event.preventDefault();saveDailyWorkload({...activity,planId:planKey,date:selectedDate});setMessage(`${selectedDay.day} activity saved. ${team.name} has been recalculated.`);setSettings((current)=>({...current}));}
-  const needsDistance=["Road training","Race"].includes(activity.activityType),needsTime=activity.activityType==="Loft exercise";
-  return <main className="feed-planner-page adaptive-planner-page"><button className="feed-back-button" onClick={onBack}>← Back to team planners</button><header className="feed-planner-hero feed-programme-hero"><div className="feed-programme-heading-icon">{team.icon}</div><div><p className="feed-kicker">Separate live planner</p><h1>{team.name}</h1><p>{team.description}</p></div><div className="feed-hero-count"><strong>{plan.totalFeedCups}</strong><span>full cups daily</span></div></header>{message&&<p className="feed-plan-success">{message}</p>}
-    <section className="adaptive-setup feed-content-card"><div className="adaptive-section-heading"><div><p className="feed-kicker">Team setup</p><h2>{team.custom?"What is happening in the loft?":team.racing?"What are these birds preparing for?":"Current feeding period"}</h2></div><button className="feed-primary-button" type="button" onClick={saveSettings}>Save {team.name}</button></div>{team.custom&&<div className="custom-planner-question"><label>Ask the planner<textarea rows="3" value={settings.customRequest} onChange={(e)=>update("customRequest",e.target.value)} placeholder="For example: The birds are having a poor moult. Create a plan to support feather growth and condition."/></label>{settings.customRequest&&<div><strong>{plan.custom.title}</strong><p>{plan.custom.explanation}</p></div>}</div>}<div className="adaptive-form-grid"><label>Team<input value={team.name} disabled/></label>{team.id==="breeding-pairs"?<><label>Number of breeding pairs<input type="number" min="1" value={settings.pairCount} onChange={(e)=>update("pairCount",e.target.value)}/></label><label>Breeding stage<select value={settings.breedingStage} onChange={(e)=>update("breedingStage",e.target.value)}><option>Resting / maintenance</option><option>Pairing and laying</option><option>Sitting eggs</option><option>Feeding youngsters</option><option>After weaning</option></select></label>{settings.breedingStage==="Feeding youngsters"&&<><label>Youngsters being fed<input type="number" min="0" value={settings.youngBirdCount} onChange={(e)=>update("youngBirdCount",e.target.value)}/></label><label>Average youngster age<select value={settings.youngBirdAge} onChange={(e)=>update("youngBirdAge",e.target.value)}><option>0–7 days</option><option>8–14 days</option><option>15 days to weaning</option></select></label></>}</>:<label>Number of birds<input type="number" min="1" value={settings.birdCount} onChange={(e)=>update("birdCount",e.target.value)}/></label>}{team.racing?<><label>Weekend target<select value={settings.hasRace?(settings.raceId||"manual"):"none"} onChange={(e)=>chooseRace(e.target.value)}><option value="none">No race this weekend</option><option value="manual">Enter race manually</option>{races.map((race)=><option value={race.id} key={race.id}>{race.raceDate} · {race.racePoint} · {race.miles} miles</option>)}</select></label>{settings.hasRace?<><label>Race point<input value={settings.racePoint} onChange={(e)=>update("racePoint",e.target.value)}/></label><label>Race distance (miles)<input type="number" min="1" value={settings.raceDistance} onChange={(e)=>update("raceDistance",e.target.value)}/></label><label>Race date<input type="date" value={settings.raceDate} onChange={(e)=>update("raceDate",e.target.value)}/></label></>:<label>Maintenance week ending<input type="date" value={settings.weekEnding} onChange={(e)=>update("weekEnding",e.target.value)}/></label>}</>:<label>Week ending<input type="date" value={settings.weekEnding} onChange={(e)=>update("weekEnding",e.target.value)}/></label>}</div>
-      {team.id==="breeding-pairs"&&<div className="mineral-cup-calibration"><label>Mineral egg-cup size<span>How many level teaspoons fill your egg cup?</span><input type="number" min="1" step="1" value={settings.mineralTeaspoonsPerEggCup} onChange={(e)=>update("mineralTeaspoonsPerEggCup",e.target.value)}/></label></div>}
-      <details className="adaptive-product-selector"><summary>Products available to {team.name} ({chosenIds.length} selected)</summary><p>Every suitable in-stock product is re-analysed automatically whenever the Product Library changes. Untick only products this team must not use.</p><div>{usableProducts.map((product)=><label key={product.id}><input type="checkbox" checked={!excludedIds.includes(product.id)} onChange={(e)=>update("excludedProductIds",e.target.checked?excludedIds.filter((id)=>id!==product.id):[...excludedIds,product.id])}/><span><strong>{product.name}</strong><small>{productPurpose(product)}</small></span></label>)}</div></details></section>
-    <section className="adaptive-daily-control feed-content-card"><div className="adaptive-section-heading"><div><p className="feed-kicker">Actual daily work</p><h2>What did {team.name.toLowerCase()} do today?</h2></div><span>{selectedDay?.day} · {selectedDate}</span></div><form onSubmit={saveActivity}><label>Plan day<select value={selectedDate} onChange={(e)=>setSelectedDate(e.target.value)}>{plan.days.map((day)=><option value={day.date} key={day.date}>{day.day} · {day.date}</option>)}</select></label><label>Activity<select value={activity.activityType} onChange={(e)=>setActivity((current)=>({...current,activityType:e.target.value}))}>{["Road training","Loft exercise","Race","Rest day","Training cancelled","No exercise","Bad weather"].map((value)=><option key={value}>{value}</option>)}</select></label>{needsDistance&&<label>Distance (miles)<input type="number" min="0" value={activity.distanceMiles||""} onChange={(e)=>setActivity((current)=>({...current,distanceMiles:e.target.value}))}/></label>}{needsTime&&<label>Exercise time (minutes)<input type="number" min="0" step="5" value={activity.durationMinutes||""} onChange={(e)=>setActivity((current)=>({...current,durationMinutes:e.target.value}))}/></label>}<label>Effort<select value={activity.effort} onChange={(e)=>setActivity((current)=>({...current,effort:e.target.value}))}><option>Easy</option><option>Normal</option><option>Hard</option></select></label><label>Bird condition<select value={activity.birdCondition} onChange={(e)=>setActivity((current)=>({...current,birdCondition:e.target.value}))}><option>On form</option><option>Heavy</option><option>Light</option><option>Tired</option></select></label><button className="feed-primary-button" type="submit">Save and recalculate</button></form></section>
-    {plan.warnings.length>0&&<div className="feed-generation-warnings"><strong>Information needed</strong><ul>{plan.warnings.map((warning)=><li key={warning}>{warning}</li>)}</ul></div>}
-    <section className="adaptive-week"><header><div><p className="feed-kicker">{team.name} live programme</p><h2>{team.custom?plan.custom.title:settings.hasRace&&team.racing?`${settings.racePoint||"Race"} · ${settings.raceDistance||0} miles`:team.id==="breeding-pairs"?settings.breedingStage:"Maintenance programme"}</h2></div><p>{plan.weekStart} to {plan.weekEnd} · {team.id==="breeding-pairs"?`${plan.pairCount} pairs${plan.youngCount?` feeding ${plan.youngCount} youngsters`:""}`:"1 full egg cup per bird daily"}</p></header><div className="adaptive-day-list">{plan.days.map((day)=><article className={day.date===selectedDate?"selected":""} key={day.date} onClick={()=>setSelectedDate(day.date)}><div className="adaptive-day-title"><strong>{day.day}</strong><span>{day.date}</span><b>{day.phase}</b><small>{day.conditionNote}</small></div><div><h3>Feed — {plan.totalFeedCups} full egg cups{plan.youngSupportCups>0?` (${plan.youngSupportCups} extra for growing youngsters)`:""}</h3>{day.feed.length?<ol>{day.feed.map((item)=><li key={item.productId}><strong>{item.cups} full egg cup{item.cups===1?"":"s"}</strong><span>{item.name}</span></li>)}</ol>:<p>No analysed feed selected.</p>}{day.feedSupplements.length>0&&<div className="adaptive-supplement"><h4>On the feed</h4>{day.feedSupplements.map((item)=><p key={item.productId}><strong>{item.name}:</strong> {item.instructions}<small>Why: {item.why}</small></p>)}</div>}</div><div className="adaptive-minerals"><h3>Minerals / grit</h3><strong>{day.minerals.name}</strong><p>{day.minerals.instructions}</p><small>Why: {day.minerals.why}</small></div><div className="adaptive-water"><h3>Drinking water</h3><strong>{day.water.name}</strong><p>{day.water.instructions}</p><small>Why: {day.water.why}</small></div></article>)}</div></section></main>;
+function GrainBreakdown({ product }) {
+  const recognised = product.plannerAnalysis?.recognisedIngredients || [];
+  const mixture =
+    product.plannerAnalysis?.mixtureComposition?.ingredients || [];
+  if (!recognised.length) return null;
+  const clean = (value) =>
+    String(value || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  return (
+    <div className="planner-grain-breakdown">
+      <strong>Grain-by-grain contribution</strong>
+      <p className="planner-grain-intro">
+        What each recognised grain or seed in this product gives to the birds:
+      </p>
+      <div>
+        {recognised.map((summary) => {
+          const grain = getGrainById(summary.id) || summary;
+          const ingredient = mixture.find((item) =>
+            grain.aliases?.some(
+              (alias) =>
+                clean(item.name).includes(clean(alias)) ||
+                clean(alias).includes(clean(item.name)),
+            ),
+          );
+          const nutrients = grain.nutrientReference;
+          return (
+            <article key={summary.id}>
+              <header>
+                <strong>{grain.name}</strong>
+                {ingredient?.percentage != null && (
+                  <span>{ingredient.percentage}% of mixture</span>
+                )}
+              </header>
+              <small>{grain.family}</small>
+              <ul>
+                {grain.primaryContributions?.map((contribution) => (
+                  <li key={contribution}>{contribution}</li>
+                ))}
+              </ul>
+              {grain.guidance && <p>{grain.guidance}</p>}
+              {nutrients && (
+                <em>
+                  Reference: {nutrients.protein}% protein · {nutrients.fat}% fat
+                  · {nutrients.fibre}% fibre
+                  {nutrients.starch != null
+                    ? ` · ${nutrients.starch}% starch`
+                    : ""}
+                </em>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
-export default function FeedPlanner(){const [products,setProducts]=useState(productStore.getProducts()),[selectedTeamId,setSelectedTeamId]=useState(null);useEffect(()=>productStore.subscribe(setProducts),[]);const team=TEAMS.find((item)=>item.id===selectedTeamId);return team?<TeamLivePlanner team={team} products={products} onBack={()=>setSelectedTeamId(null)}/>:<TeamDashboard onOpen={setSelectedTeamId}/>;}
+function TeamDashboard({ onOpen }) {
+  const summaries = getAdaptivePlannerSummaries();
+  return (
+    <main className="feed-planner-page">
+      <header className="feed-planner-hero">
+        <div>
+          <p className="feed-kicker">Loft Commander nutrition</p>
+          <h1>Adaptive Feed Planner</h1>
+          <p>
+            Choose a team. Every tile has its own live planner, products, race
+            target, workload and saved history.
+          </p>
+        </div>
+        <div className="feed-hero-count">
+          <strong>{TEAMS.length}</strong>
+          <span>team planners</span>
+        </div>
+      </header>
+      <section className="feed-plan-dashboard-heading">
+        <div>
+          <p className="feed-kicker">Live team programmes</p>
+          <h2>Which birds are you planning for?</h2>
+        </div>
+        <p>
+          Each team remains separate, so changing one planner cannot alter
+          another team.
+        </p>
+      </section>
+      <section className="feed-programme-grid adaptive-team-grid">
+        {TEAMS.map((team) => {
+          const saved = summaries[team.id],
+            count =
+              team.id === "breeding-pairs"
+                ? `${saved?.pairCount || 0} pairs`
+                : `${saved?.birdCount || 0} birds`;
+          return (
+            <button
+              className="feed-programme-tile"
+              key={team.id}
+              onClick={() => onOpen(team.id)}
+            >
+              <span className="feed-programme-icon">{team.icon}</span>
+              <span className="feed-programme-copy">
+                <strong>{team.name}</strong>
+                <small>{team.description}</small>
+              </span>
+              <b>
+                {saved
+                  ? `${count} · Open live planner →`
+                  : "Create live planner →"}
+              </b>
+            </button>
+          );
+        })}
+      </section>
+    </main>
+  );
+}
+
+function TeamLivePlanner({ team, products, onBack }) {
+  const defaults = {
+    teamId: team.id,
+    team: team.name,
+    birdCount: "20",
+    pairCount: "10",
+    breedingStage: "Pairing and laying",
+    youngBirdCount: "0",
+    youngBirdAge: "0–7 days",
+    mineralTeaspoonsPerEggCup: "8",
+    customRequest: "",
+    hasRace: team.racing,
+    racePoint: "",
+    raceDistance: "",
+    raceDate: nextSaturday(),
+    weekEnding: nextSaturday(),
+    excludedProductIds: [],
+  };
+  const [settings, setSettings] = useState(() => {
+      const saved = loadAdaptivePlanner(team.id) || {};
+      return {
+        ...defaults,
+        ...saved,
+        excludedProductIds: saved.excludedProductIds || [],
+      };
+    }),
+    [selectedDate, setSelectedDate] = useState(""),
+    [activity, setActivity] = useState(EMPTY_ACTIVITY),
+    [message, setMessage] = useState(""),
+    [productExplanation, setProductExplanation] = useState(null);
+  const races = useMemo(
+    () =>
+      raceStore
+        .getRaces()
+        .filter((race) => race.raceDate && race.status !== "Cancelled")
+        .sort((a, b) => a.raceDate.localeCompare(b.raceDate)),
+    [],
+  );
+  const usableProducts = useMemo(
+    () =>
+      products.filter(
+        (product) =>
+          !product.archived &&
+          product.inStock !== false &&
+          [
+            "Corn / Feed Mix",
+            "Straight Grain",
+            "Mineral / Grit",
+            "Supplement",
+            "Drink Additive",
+          ].includes(product.category),
+      ),
+    [products],
+  );
+  const excludedIds = settings.excludedProductIds || [],
+    chosenIds = usableProducts
+      .filter((product) => !excludedIds.includes(product.id))
+      .map((product) => product.id),
+    planKey = `adaptive-${team.id}`;
+  const provisional = generateAdaptiveWeek(
+      { ...settings, team: team.name, productIds: chosenIds },
+      products,
+      [],
+    ),
+    activities = provisional.days
+      .map((day) => getDailyWorkload(planKey, day.date))
+      .filter(Boolean),
+    plan = generateAdaptiveWeek(
+      { ...settings, team: team.name, productIds: chosenIds },
+      products,
+      activities,
+    ),
+    selectedDay =
+      plan.days.find((day) => day.date === selectedDate) || plan.days[0];
+  useEffect(() => {
+    if (!selectedDate || !plan.days.some((day) => day.date === selectedDate))
+      setSelectedDate(plan.days[0]?.date || "");
+  }, [plan.weekStart, plan.weekEnd]);
+  useEffect(() => {
+    const saved = selectedDate ? getDailyWorkload(planKey, selectedDate) : null;
+    setActivity(saved || EMPTY_ACTIVITY);
+  }, [selectedDate, planKey]);
+  const update = (field, value) =>
+    setSettings((current) => ({ ...current, [field]: value }));
+  function explainProduct(event, item) {
+    event.stopPropagation();
+    const product = products.find(
+      (candidate) => candidate.id === item.productId,
+    );
+    if (!product) return;
+    setProductExplanation({
+      product,
+      whyToday: item.why,
+      phase: selectedDay?.phase,
+    });
+  }
+  function saveSettings() {
+    const { productIds: _legacyProductIds, ...current } = settings;
+    const saved = saveAdaptivePlanner(team.id, {
+      ...current,
+      team: team.name,
+      excludedProductIds: excludedIds,
+    });
+    setSettings(saved);
+    setMessage(
+      `${team.name} planner saved. All new products will be assessed automatically.`,
+    );
+  }
+  function chooseRace(value) {
+    if (value === "manual") {
+      update("hasRace", true);
+      return;
+    }
+    if (value === "none") {
+      setSettings((current) => ({
+        ...current,
+        hasRace: false,
+        raceId: null,
+        racePoint: "",
+        raceDistance: "",
+        raceDate: current.weekEnding || nextSaturday(),
+      }));
+      return;
+    }
+    const race = races.find((item) => item.id === value);
+    if (race)
+      setSettings((current) => ({
+        ...current,
+        hasRace: true,
+        raceId: race.id,
+        racePoint: race.racePoint || "",
+        raceDistance: String(race.miles || ""),
+        raceDate: race.raceDate,
+      }));
+  }
+  function saveActivity(event) {
+    event.preventDefault();
+    saveDailyWorkload({ ...activity, planId: planKey, date: selectedDate });
+    setMessage(
+      `${selectedDay.day} activity saved. ${team.name} has been recalculated.`,
+    );
+    setSettings((current) => ({ ...current }));
+  }
+  const needsDistance = ["Road training", "Race"].includes(
+      activity.activityType,
+    ),
+    needsTime = activity.activityType === "Loft exercise";
+  return (
+    <main className="feed-planner-page adaptive-planner-page">
+      <button className="feed-back-button" onClick={onBack}>
+        ← Back to team planners
+      </button>
+      <header className="feed-planner-hero feed-programme-hero">
+        <div className="feed-programme-heading-icon">{team.icon}</div>
+        <div>
+          <p className="feed-kicker">Separate live planner</p>
+          <h1>{team.name}</h1>
+          <p>{team.description}</p>
+        </div>
+        <div className="feed-hero-count">
+          <strong>{plan.totalFeedCups}</strong>
+          <span>full cups daily</span>
+        </div>
+      </header>
+      {message && <p className="feed-plan-success">{message}</p>}
+      <section className="adaptive-setup feed-content-card">
+        <div className="adaptive-section-heading">
+          <div>
+            <p className="feed-kicker">Team setup</p>
+            <h2>
+              {team.custom
+                ? "What is happening in the loft?"
+                : team.racing
+                  ? "What are these birds preparing for?"
+                  : "Current feeding period"}
+            </h2>
+          </div>
+          <button
+            className="feed-primary-button"
+            type="button"
+            onClick={saveSettings}
+          >
+            Save {team.name}
+          </button>
+        </div>
+        {team.custom && (
+          <div className="custom-planner-question">
+            <label>
+              Ask the planner
+              <textarea
+                rows="3"
+                value={settings.customRequest}
+                onChange={(e) => update("customRequest", e.target.value)}
+                placeholder="For example: The birds are having a poor moult. Create a plan to support feather growth and condition."
+              />
+            </label>
+            {settings.customRequest && (
+              <div>
+                <strong>{plan.custom.title}</strong>
+                <p>{plan.custom.explanation}</p>
+              </div>
+            )}
+          </div>
+        )}
+        <div className="adaptive-form-grid">
+          <label>
+            Team
+            <input value={team.name} disabled />
+          </label>
+          {team.id === "breeding-pairs" ? (
+            <>
+              <label>
+                Number of breeding pairs
+                <input
+                  type="number"
+                  min="1"
+                  value={settings.pairCount}
+                  onChange={(e) => update("pairCount", e.target.value)}
+                />
+              </label>
+              <label>
+                Breeding stage
+                <select
+                  value={settings.breedingStage}
+                  onChange={(e) => update("breedingStage", e.target.value)}
+                >
+                  <option>Resting / maintenance</option>
+                  <option>Pairing and laying</option>
+                  <option>Sitting eggs</option>
+                  <option>Feeding youngsters</option>
+                  <option>After weaning</option>
+                </select>
+              </label>
+              {settings.breedingStage === "Feeding youngsters" && (
+                <>
+                  <label>
+                    Youngsters being fed
+                    <input
+                      type="number"
+                      min="0"
+                      value={settings.youngBirdCount}
+                      onChange={(e) => update("youngBirdCount", e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Average youngster age
+                    <select
+                      value={settings.youngBirdAge}
+                      onChange={(e) => update("youngBirdAge", e.target.value)}
+                    >
+                      <option>0–7 days</option>
+                      <option>8–14 days</option>
+                      <option>15 days to weaning</option>
+                    </select>
+                  </label>
+                </>
+              )}
+            </>
+          ) : (
+            <label>
+              Number of birds
+              <input
+                type="number"
+                min="1"
+                value={settings.birdCount}
+                onChange={(e) => update("birdCount", e.target.value)}
+              />
+            </label>
+          )}
+          {team.racing ? (
+            <>
+              <label>
+                Weekend target
+                <select
+                  value={
+                    settings.hasRace ? settings.raceId || "manual" : "none"
+                  }
+                  onChange={(e) => chooseRace(e.target.value)}
+                >
+                  <option value="none">No race this weekend</option>
+                  <option value="manual">Enter race manually</option>
+                  {races.map((race) => (
+                    <option value={race.id} key={race.id}>
+                      {race.raceDate} · {race.racePoint} · {race.miles} miles
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {settings.hasRace ? (
+                <>
+                  <label>
+                    Race point
+                    <input
+                      value={settings.racePoint}
+                      onChange={(e) => update("racePoint", e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Race distance (miles)
+                    <input
+                      type="number"
+                      min="1"
+                      value={settings.raceDistance}
+                      onChange={(e) => update("raceDistance", e.target.value)}
+                    />
+                  </label>
+                  <label>
+                    Race date
+                    <input
+                      type="date"
+                      value={settings.raceDate}
+                      onChange={(e) => update("raceDate", e.target.value)}
+                    />
+                  </label>
+                </>
+              ) : (
+                <label>
+                  Maintenance week ending
+                  <input
+                    type="date"
+                    value={settings.weekEnding}
+                    onChange={(e) => update("weekEnding", e.target.value)}
+                  />
+                </label>
+              )}
+            </>
+          ) : (
+            <label>
+              Week ending
+              <input
+                type="date"
+                value={settings.weekEnding}
+                onChange={(e) => update("weekEnding", e.target.value)}
+              />
+            </label>
+          )}
+        </div>
+        {team.id === "breeding-pairs" && (
+          <div className="mineral-cup-calibration">
+            <label>
+              Mineral egg-cup size
+              <span>How many level teaspoons fill your egg cup?</span>
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={settings.mineralTeaspoonsPerEggCup}
+                onChange={(e) =>
+                  update("mineralTeaspoonsPerEggCup", e.target.value)
+                }
+              />
+            </label>
+          </div>
+        )}
+        <details className="adaptive-product-selector">
+          <summary>
+            Products available to {team.name} ({chosenIds.length} selected)
+          </summary>
+          <p>
+            Every suitable in-stock product is re-analysed automatically
+            whenever the Product Library changes. Untick only products this team
+            must not use.
+          </p>
+          <div>
+            {usableProducts.map((product) => (
+              <label key={product.id}>
+                <input
+                  type="checkbox"
+                  checked={!excludedIds.includes(product.id)}
+                  onChange={(e) =>
+                    update(
+                      "excludedProductIds",
+                      e.target.checked
+                        ? excludedIds.filter((id) => id !== product.id)
+                        : [...excludedIds, product.id],
+                    )
+                  }
+                />
+                <span>
+                  <strong>{product.name}</strong>
+                  <small>{productPurpose(product)}</small>
+                </span>
+              </label>
+            ))}
+          </div>
+        </details>
+      </section>
+      <section className="adaptive-daily-control feed-content-card">
+        <div className="adaptive-section-heading">
+          <div>
+            <p className="feed-kicker">Actual daily work</p>
+            <h2>What did {team.name.toLowerCase()} do today?</h2>
+          </div>
+          <span>
+            {selectedDay?.day} · {selectedDate}
+          </span>
+        </div>
+        <form onSubmit={saveActivity}>
+          <label>
+            Plan day
+            <select
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            >
+              {plan.days.map((day) => (
+                <option value={day.date} key={day.date}>
+                  {day.day} · {day.date}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Activity
+            <select
+              value={activity.activityType}
+              onChange={(e) =>
+                setActivity((current) => ({
+                  ...current,
+                  activityType: e.target.value,
+                }))
+              }
+            >
+              {[
+                "Road training",
+                "Loft exercise",
+                "Race",
+                "Rest day",
+                "Training cancelled",
+                "No exercise",
+                "Bad weather",
+              ].map((value) => (
+                <option key={value}>{value}</option>
+              ))}
+            </select>
+          </label>
+          {needsDistance && (
+            <label>
+              Distance (miles)
+              <input
+                type="number"
+                min="0"
+                value={activity.distanceMiles || ""}
+                onChange={(e) =>
+                  setActivity((current) => ({
+                    ...current,
+                    distanceMiles: e.target.value,
+                  }))
+                }
+              />
+            </label>
+          )}
+          {needsTime && (
+            <label>
+              Exercise time (minutes)
+              <input
+                type="number"
+                min="0"
+                step="5"
+                value={activity.durationMinutes || ""}
+                onChange={(e) =>
+                  setActivity((current) => ({
+                    ...current,
+                    durationMinutes: e.target.value,
+                  }))
+                }
+              />
+            </label>
+          )}
+          <label>
+            Effort
+            <select
+              value={activity.effort}
+              onChange={(e) =>
+                setActivity((current) => ({
+                  ...current,
+                  effort: e.target.value,
+                }))
+              }
+            >
+              <option>Easy</option>
+              <option>Normal</option>
+              <option>Hard</option>
+            </select>
+          </label>
+          <label>
+            Bird condition
+            <select
+              value={activity.birdCondition}
+              onChange={(e) =>
+                setActivity((current) => ({
+                  ...current,
+                  birdCondition: e.target.value,
+                }))
+              }
+            >
+              <option>On form</option>
+              <option>Heavy</option>
+              <option>Light</option>
+              <option>Tired</option>
+            </select>
+          </label>
+          <button className="feed-primary-button" type="submit">
+            Save and recalculate
+          </button>
+        </form>
+      </section>
+      {plan.warnings.length > 0 && (
+        <div className="feed-generation-warnings">
+          <strong>Information needed</strong>
+          <ul>
+            {plan.warnings.map((warning) => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <section className="adaptive-week">
+        <header>
+          <div>
+            <p className="feed-kicker">{team.name} live programme</p>
+            <h2>
+              {team.custom
+                ? plan.custom.title
+                : settings.hasRace && team.racing
+                  ? `${settings.racePoint || "Race"} · ${settings.raceDistance || 0} miles`
+                  : team.id === "breeding-pairs"
+                    ? settings.breedingStage
+                    : "Maintenance programme"}
+            </h2>
+          </div>
+          <p>
+            {plan.weekStart} to {plan.weekEnd} ·{" "}
+            {team.id === "breeding-pairs"
+              ? `${plan.pairCount} pairs${plan.youngCount ? ` feeding ${plan.youngCount} youngsters` : ""}`
+              : "1 full egg cup per bird daily"}
+          </p>
+        </header>
+        <div className="adaptive-day-list">
+          {plan.days.map((day) => (
+            <article
+              className={day.date === selectedDate ? "selected" : ""}
+              key={day.date}
+              onClick={() => setSelectedDate(day.date)}
+            >
+              <div className="adaptive-day-title">
+                <strong>{day.day}</strong>
+                <span>{day.date}</span>
+                <b>{day.phase}</b>
+                <small>{day.conditionNote}</small>
+              </div>
+              <div>
+                <h3>
+                  Feed — {plan.totalFeedCups} full egg cups
+                  {plan.youngSupportCups > 0
+                    ? ` (${plan.youngSupportCups} extra for growing youngsters)`
+                    : ""}
+                </h3>
+                {day.feed.length ? (
+                  <ol>
+                    {day.feed.map((item) => (
+                      <li key={item.productId}>
+                        <strong>
+                          {item.cups} full egg cup{item.cups === 1 ? "" : "s"}
+                        </strong>
+                        <button
+                          className="planner-product-link"
+                          onClick={(event) => explainProduct(event, item)}
+                        >
+                          {item.name}
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p>No analysed feed selected.</p>
+                )}
+                {day.feedSupplements.length > 0 && (
+                  <div className="adaptive-supplement">
+                    <h4>On the feed</h4>
+                    {day.feedSupplements.map((item) => (
+                      <p key={item.productId}>
+                        <button
+                          className="planner-product-link"
+                          onClick={(event) => explainProduct(event, item)}
+                        >
+                          {item.name}
+                        </button>{" "}
+                        {item.instructions}
+                        <small>Why: {item.why}</small>
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="adaptive-minerals">
+                <h3>Minerals / grit</h3>
+                {day.minerals.productId ? (
+                  <button
+                    className="planner-product-link"
+                    onClick={(event) => explainProduct(event, day.minerals)}
+                  >
+                    {day.minerals.name}
+                  </button>
+                ) : (
+                  <strong>{day.minerals.name}</strong>
+                )}
+                <p>{day.minerals.instructions}</p>
+                <small>Why: {day.minerals.why}</small>
+              </div>
+              <div className="adaptive-water">
+                <h3>Drinking water</h3>
+                {day.water.productId ? (
+                  <button
+                    className="planner-product-link"
+                    onClick={(event) => explainProduct(event, day.water)}
+                  >
+                    {day.water.name}
+                  </button>
+                ) : (
+                  <strong>{day.water.name}</strong>
+                )}
+                <p>{day.water.instructions}</p>
+                <small>Why: {day.water.why}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+      {productExplanation && (
+        <div
+          className="feed-modal-backdrop"
+          onClick={() => setProductExplanation(null)}
+        >
+          <section
+            className="planner-product-explanation"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header>
+              <div>
+                <p className="feed-kicker">Why this is in the planner</p>
+                <h2>{productExplanation.product.name}</h2>
+              </div>
+              <button
+                className="feed-icon-button"
+                onClick={() => setProductExplanation(null)}
+              >
+                ×
+              </button>
+            </header>
+            <div className="planner-product-explanation-body">
+              <p className="planner-product-job">
+                {productExplanation.product.primaryJob ||
+                  productExplanation.product.description ||
+                  "No product purpose has been recorded yet."}
+              </p>
+              {productExplanation.whyToday && (
+                <div>
+                  <strong>What it does today</strong>
+                  <p>{productExplanation.whyToday}</p>
+                </div>
+              )}
+              {productExplanation.product.keyBenefits && (
+                <div>
+                  <strong>Benefit to the bird</strong>
+                  <p>{productExplanation.product.keyBenefits}</p>
+                </div>
+              )}
+              <GrainBreakdown product={productExplanation.product} />
+              <small>
+                Current purpose: {productExplanation.phase || "Daily nutrition"}
+              </small>
+            </div>
+            <footer>
+              <button
+                className="feed-primary-button"
+                onClick={() => setProductExplanation(null)}
+              >
+                Close
+              </button>
+            </footer>
+          </section>
+        </div>
+      )}
+    </main>
+  );
+}
+
+export default function FeedPlanner({
+  initialTeamId = null,
+  onInitialTeamOpened,
+}) {
+  const [products, setProducts] = useState(productStore.getProducts()),
+    [selectedTeamId, setSelectedTeamId] = useState(initialTeamId);
+  useEffect(() => productStore.subscribe(setProducts), []);
+  useEffect(() => {
+    if (initialTeamId) {
+      setSelectedTeamId(initialTeamId);
+      onInitialTeamOpened?.();
+    }
+  }, [initialTeamId]);
+  const team = TEAMS.find((item) => item.id === selectedTeamId);
+  return team ? (
+    <TeamLivePlanner
+      team={team}
+      products={products}
+      onBack={() => setSelectedTeamId(null)}
+    />
+  ) : (
+    <TeamDashboard onOpen={setSelectedTeamId} />
+  );
+}

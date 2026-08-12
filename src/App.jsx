@@ -152,6 +152,7 @@ function generateBirdId(existingBirds) {
 
 function App() {
  const [activePage, setActivePage] = useState(getInitialPage)
+  const [feedPlannerTeamId, setFeedPlannerTeamId] = useState(null)
   const [birds, setBirds] = useState(initialiseBirdStore)
   const [boxAssignments, setBoxAssignments] = useState(loadBoxes)
 
@@ -574,11 +575,11 @@ function exportBirds() {
         )}
 
         {activePage === 'Season Planner' && (
-          <SeasonPlanner />
+          <SeasonPlanner onOpenFeedPlanner={(teamId) => { setFeedPlannerTeamId(teamId); setActivePage('Feed Planner'); }} />
         )}
 
         {activePage === 'Feed Planner' && (
-          <FeedPlanner />
+          <FeedPlanner initialTeamId={feedPlannerTeamId} onInitialTeamOpened={() => setFeedPlannerTeamId(null)} />
         )}
 
         {activePage === 'Product Library' && (
